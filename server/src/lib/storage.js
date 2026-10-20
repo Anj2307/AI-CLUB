@@ -22,7 +22,8 @@ function diskStorage(dir = config.uploadDir) {
 
 function supabaseStorage({ url, serviceKey, bucket }) {
   const api = `${url}/storage/v1/object`;
-  const headers = { Authorization: `Bearer ${serviceKey}`, apikey: serviceKey };
+  // Legacy service_role keys are JWTs and go in both headers; new sb_secret_ keys go in apikey only.
+  const headers = serviceKey.startsWith("eyJ") ? { Authorization: `Bearer ${serviceKey}`, apikey: serviceKey } : { apikey: serviceKey };
 
   async function call(target, init) {
     const res = await fetch(target, { ...init, headers: { ...headers, ...init.headers } });

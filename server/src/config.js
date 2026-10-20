@@ -40,7 +40,8 @@ const config = Object.freeze({
   uploadDir: path.resolve(ROOT, env.UPLOAD_DIR || path.join(dataDir, "uploads")),
   // Supabase Storage for uploaded images instead of UPLOAD_DIR (needs a public bucket).
   supabase: {
-    url: (env.SUPABASE_URL || "").replace(/\/+$/, ""),
+    // Accept the project URL with or without a copied API path such as /rest/v1/.
+    url: (env.SUPABASE_URL || "").replace(/\/+$/, "").replace(/\/(rest|storage|auth)\/v1$/, ""),
     serviceKey: env.SUPABASE_SERVICE_KEY || "",
     bucket: env.SUPABASE_BUCKET || "uploads"
   },
