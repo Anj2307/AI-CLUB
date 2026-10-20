@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="IIT Dharwad logo placeholder">
+  <circle cx="60" cy="60" r="56" fill="#1e293b" stroke="#94a3b8" stroke-width="3" stroke-dasharray="6 5"/>
+  <text x="60" y="56" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#e2e8f0">IIT</text>
+  <text x="60" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">DHARWAD</text>
+</svg>
