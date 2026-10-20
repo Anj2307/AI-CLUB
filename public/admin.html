@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin | AI Club IIT Dharwad</title>
+  <meta name="description" content="Admin panel for managing AI Club IIT Dharwad website content.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#07070f">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/core.js"></script>
+</head>
+<body data-no-layout class="admin-body">
+  <div id="boot" class="login-wrap"><div class="spinner" aria-label="Loading"></div></div>
+
+  <div id="login" class="login-wrap hidden">
+    <canvas id="net" aria-hidden="true"></canvas>
+    <div class="card login-card">
+      <img class="brand-logo" src="assets/img/logo-placeholder.svg" alt="">
+      <h2 style="font-size:1.6rem">Admin sign in</h2>
+      <p class="muted small">Manage people, projects, events, gallery, news and site settings.</p>
+      <form id="login-form" novalidate>
+        <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username" required></div>
+        <div class="field"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password" required></div>
+        <div class="form-status err" id="login-error" role="alert"></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:6px" type="submit" id="login-btn">Sign in &rarr;</button>
+        <p class="center small" style="margin-top:14px"><a class="muted" href="index.html">&larr; Back to site</a></p>
+      </form>
+    </div>
+  </div>
+
+  <div id="offline" class="login-wrap hidden">
+    <div class="card login-card">
+      <h2 style="font-size:1.5rem">Admin needs the server</h2>
+      <p class="muted">This copy of the site is running without its backend, so content can't be edited here.
+        Start the server with <code>npm start</code> and open <code>/admin</code> on it.</p>
+      <a class="btn" href="index.html">&larr; Back to site</a>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="admin-mobile-bar">
+      <button class="icon-btn" id="side-toggle" aria-label="Open admin menu"></button>
+      <b>Admin</b>
+      <a class="btn btn-sm" href="index.html" target="_blank" rel="noopener">View site</a>
+    </div>
+    <div class="admin-shell">
+      <aside class="admin-side" id="side">
+        <a class="brand" href="index.html" target="_blank" rel="noopener">
+          <img src="assets/img/logo-placeholder.svg" alt="" class="brand-logo">
+          <span class="brand-text"><strong>Admin</strong><small>AI Club IIT Dharwad</small></span>
+        </a>
+        <nav id="side-links" aria-label="Admin"></nav>
+        <div class="spacer"></div>
+        <div class="side-user" id="side-user"></div>
+        <a class="btn btn-sm" href="index.html" target="_blank" rel="noopener" style="margin-bottom:8px">View site &nearr;</a>
+        <button class="btn btn-sm btn-danger" id="logout" type="button">Sign out</button>
+      </aside>
+      <main class="admin-main" id="admin-main" tabindex="-1"></main>
+    </div>
+  </div>
+<script src="assets/js/pages/admin.js"></script>
+</body>
+</html>

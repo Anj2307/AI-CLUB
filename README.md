@@ -1,63 +1,86 @@
-# AI Club IIT Dharwad - Website
+# AI Club IIT Dharwad
 
-A fast, multi-page static website for the AI Club of IIT Dharwad. Plain HTML, CSS and JavaScript: no build step and no framework, so it can be hosted for free on GitHub Pages.
+The official website of the AI Club, IIT Dharwad. It has a public site with ten pages, a content API, and an admin panel with accounts and roles, all shipped as a single Docker container.
+
+| | |
+|---|---|
+| **Frontend** | Plain HTML, CSS and JS with no build step. Light and dark themes, responsive, accessible. |
+| **Backend** | Node.js 22, Express 5, SQLite (better-sqlite3), zod validation |
+| **Auth** | bcrypt passwords, JWT in an HttpOnly cookie, `admin` and `editor` roles |
+| **Ops** | Dockerfile, docker compose with automatic HTTPS (Caddy), a Render blueprint, GitHub Actions CI, a backup script |
+
+See **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** for the design and security model, and **[docs/API.md](docs/API.md)** for the API.
 
 ## Pages
 
-| Page | File | What's on it |
-|---|---|---|
-| Home | `index.html` | Animated neural-network hero, stats, focus areas, featured projects, upcoming events, latest news, partners, join CTA |
-| Dashboard | `dashboard.html` | KPIs, events-per-month chart, project status, projects by domain, team composition, upcoming events, news, activity timeline |
-| People | `people.html` | Faculty advisors plus team members, with team filters and search |
-| Projects | `projects.html` | Project cards with domain/status filters and detail pop-ups |
-| Events | `events.html` | Next event with a live countdown, upcoming and past events, type filters |
-| Gallery | `gallery.html` | Masonry photo grid with albums and a keyboard-navigable lightbox |
-| News | `news.html` | Featured story, category filters, search and full-article pop-ups |
-| Contact | `contact.html` | Contact details, map, message form (opens email) and FAQ |
-| Admin | `admin.html` | Add, edit, delete and reorder all content, edit site settings, export and import data |
-| 404 | `404.html` | Not-found page |
-
-Light and dark themes are both supported (toggle in the header). Every page is responsive.
+| Public | Admin (`/admin`) |
+|---|---|
+| Home, Dashboard, People, Projects, Events, Gallery, News, Contact, 404 | Overview, Inbox (contact form), People, Projects, Events, Gallery, News, Partners, Media library, Site settings, Users, Activity log, Backup & restore, My account |
 
 ## Run locally
 
 ```bash
-python3 -m http.server 8000
-# open http://localhost:8000
+npm install
+npm run dev            # http://localhost:3000, restarts on file changes
 ```
 
-Opening `index.html` directly also works.
+On first start the server creates the database, fills it with the placeholder content in `public/assets/js/data.js`, and creates an admin account. The admin password is printed in the terminal. To choose your own instead:
+
+```bash
+ADMIN_EMAIL=you@iitdh.ac.in ADMIN_PASSWORD='a-long-password' npm run dev
+```
+
+Then open http://localhost:3000/admin.
+
+Run the tests with:
+
+```bash
+npm test               # API test suite (node:test + supertest)
+```
+
+## Deploy
+
+### Option A: any Linux server with Docker (recommended)
+
+```bash
+git clone <this repo> aiclub && cd aiclub
+cp .env.example .env
+# edit .env: set JWT_SECRET (openssl rand -hex 32), ADMIN_EMAIL, ADMIN_PASSWORD, DOMAIN
+docker compose --profile https up -d --build
+```
+
+Point your domain's DNS at the server. Caddy then gets an HTTPS certificate on its own. All data lives in the `aiclub-data` volume.
+
+For nightly backups, add `deploy/backup.sh` to cron (see the comment at the top of the script).
+
+### Option B: Render (managed, no server to maintain)
+
+Create a new Blueprint from this repository. `render.yaml` sets up the service, a persistent disk and a generated `JWT_SECRET`. Set `ADMIN_PASSWORD` in the dashboard before the first deploy.
+
+### Option C: static only (GitHub Pages)
+
+Publish the `public/` folder. The site renders fully from `assets/js/data.js`. The admin panel and the contact inbox need the backend, and the contact form falls back to opening the visitor's email app. To use a backend hosted somewhere else, add `<meta name="aiclub-api" content="https://your-api">` to the pages and list the Pages origin in that server's `CORS_ORIGINS`.
 
 ## Replacing the placeholders
 
-All content lives in **one file**: `assets/js/data.js`. Every name, photo and number in it is a placeholder.
+Do this through **Admin → Site settings / People / Media library**. Upload real logos and photos there and they're saved on the server. The bundled placeholder files are:
 
-- **Club logo:** replace `assets/img/logo-placeholder.svg` (and `assets/img/favicon.svg`), or point `settings.logo` at your own file.
-- **IIT Dharwad logo:** replace `assets/img/iitdh-logo-placeholder.svg`.
-- **Photos:** put real images in `assets/img/` (for example `assets/img/people/name.jpg`) and update the paths in `data.js`. People without a photo get a coloured initials avatar automatically.
-- **Partner logos:** `assets/img/placeholders/sponsor.svg`.
-- **Social links, email, join form:** under `settings` in `data.js`.
+- `public/assets/img/logo-placeholder.svg` and `favicon.svg` (club logo)
+- `public/assets/img/iitdh-logo-placeholder.svg` (institute logo)
+- `public/assets/img/placeholders/*` (event, project, gallery and news images)
 
-## Using the admin panel
+`public/assets/js/data.js` is the seed content for new installations and the fallback for static hosting. Run `npm run seed -- --force` to reset a database to it.
 
-1. Open `admin.html`. The default password is `aiclub@admin`. Change it under **Site settings** as soon as you sign in.
-2. Edit any content. Changes are saved in *your browser* and show up right away on every page, for you only.
-3. To publish, go to **Backup & publish**, click **Export data.js**, replace `assets/js/data.js` in the repository with the downloaded file, then commit and push.
+## Useful commands
 
-> **Security note:** this is a static site, so the admin password check runs in the browser. It only stops casual edits; it is not real security. Nobody can change the live site without pushing to this repository, so the real protection is who has write access to the repo. If you later need real multi-user editing, connect a backend such as Firebase or Supabase.
+| Command | What it does |
+|---|---|
+| `npm start` | Run in production mode |
+| `npm run dev` | Run with auto-restart |
+| `npm test` | Run the API tests |
+| `npm run seed` | Seed an empty database (`-- --force` to overwrite) |
+| `npm run create-admin -- you@iitdh.ac.in "Name"` | Create an admin or reset their password (account recovery) |
 
-## Deploy on GitHub Pages
+## Configuration
 
-Go to Settings → Pages, choose "Deploy from a branch", pick the branch and the `/ (root)` folder. The `.nojekyll` file is already included.
-
-## Structure
-
-```
-assets/
-  css/style.css        design system (tokens, components, light and dark themes)
-  js/data.js           ALL site content - edit this
-  js/core.js           shared header/footer, theme, data store, helpers
-  js/pages/*.js        page-specific scripts
-  img/                 logos and placeholder images
-*.html                 one file per page
-```
+All settings are environment variables. They're documented in [`.env.example`](.env.example). `JWT_SECRET` is required in production, and the server won't start without it.

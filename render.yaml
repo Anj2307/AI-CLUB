@@ -1,0 +1,20 @@
+# One-click deploy on Render (https://render.com) - uses the Dockerfile and a persistent disk.
+services:
+  - type: web
+    name: aiclub-iitdh
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: aiclub@iitdh.ac.in
+      - key: DATA_DIR
+        value: /app/data
+    disk:
+      name: aiclub-data
+      mountPath: /app/data
+      sizeGB: 1

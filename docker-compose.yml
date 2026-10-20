@@ -1,0 +1,35 @@
+# Production stack.
+#   docker compose up -d                   app only, on port 3000 (put your own proxy in front)
+#   docker compose --profile https up -d   app + Caddy with automatic HTTPS for $DOMAIN
+services:
+  app:
+    build: .
+    image: aiclub-iitdh:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATA_DIR: /app/data
+    volumes:
+      - aiclub-data:/app/data
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["https"]
+    restart: unless-stopped
+    depends_on: [app]
+    environment:
+      DOMAIN: ${DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  aiclub-data:
+  caddy-data:
+  caddy-config:
