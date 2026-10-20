@@ -1,6 +1,6 @@
-# AI Club IIT Dharwad
+# Hardly Human
 
-The official website of the AI Club, IIT Dharwad. It has a public site with ten pages, a content API, and an admin panel with accounts and roles, all shipped as a single Docker container.
+The official website of **Hardly Human**, the AI club of IIT Dharwad. It has a public site with ten pages, a content API, and an admin panel with accounts and roles, all shipped as a single Docker container.
 
 | | |
 |---|---|
@@ -61,11 +61,20 @@ Create a new Blueprint from this repository. `render.yaml` sets up the service, 
 
 Publish the `public/` folder. The site renders fully from `assets/js/data.js`. The admin panel and the contact inbox need the backend, and the contact form falls back to opening the visitor's email app. To use a backend hosted somewhere else, add `<meta name="aiclub-api" content="https://your-api">` to the pages and list the Pages origin in that server's `CORS_ORIGINS`.
 
+## Design
+
+The identity plays on the club's name: the line between human and machine.
+
+- **Colour:** warm coral (human) to electric cyan (machine). The gradient between them is the brand.
+- **Type:** Instrument Serif italic is the "human" voice, JetBrains Mono the "machine" voice, and Space Grotesk and Inter carry everything else.
+- **Home page:** a particle portrait whose face is organic and whose back of the head is a pixel grid. It dissolves into a rotating 3D sphere and back, and visitors can push the particles with the cursor or flip the human/machine switch. The page also has a scroll-lit manifesto and a playable "Human or machine?" Turing test.
+- **Motion:** every animation is switched off for visitors who set "reduce motion" on their device.
+
 ## Replacing the placeholders
 
 Do this through **Admin → Site settings / People / Media library**. Upload real logos and photos there and they're saved on the server. The bundled placeholder files are:
 
-- `public/assets/img/logo-placeholder.svg` and `favicon.svg` (club logo)
+- `public/assets/img/logo-placeholder.svg` and `favicon.svg` (the "HH" monogram: one hand-drawn H, one pixel H)
 - `public/assets/img/iitdh-logo-placeholder.svg` (institute logo)
 - `public/assets/img/placeholders/*` (event, project, gallery and news images)
 

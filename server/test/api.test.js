@@ -8,7 +8,9 @@ const request = require("supertest");
 const db = require("../src/db");
 const { createRepos } = require("../src/repositories");
 const { createApp } = require("../src/app");
-const { seedContent } = require("../src/db/seed");
+const { seedContent, loadStaticData } = require("../src/db/seed");
+
+const SEED_NAME = loadStaticData().settings.clubName;
 
 const ADMIN = { email: "admin@test.dev", password: "correct-horse-battery" };
 const EDITOR = { email: "editor@test.dev", password: "editor-password-1" };
@@ -37,7 +39,7 @@ describe("public API", () => {
 
   test("site bootstrap returns seeded content", async () => {
     const res = await request(app).get("/api/v1/site").expect(200);
-    assert.equal(res.body.settings.clubName, "AI Club");
+    assert.equal(res.body.settings.clubName, SEED_NAME);
     assert.ok(res.body.people.length > 0);
     assert.ok(Array.isArray(res.body.projects[0].tech), "JSON columns are decoded");
     assert.ok(!("position" in res.body.people[0]), "internal columns are hidden");
@@ -138,7 +140,7 @@ describe("content management", () => {
   test("settings update is partial and validated", async () => {
     const res = await editor.put("/api/v1/settings").send({ tagline: "New tagline", stats: { members: 300 } }).expect(200);
     assert.equal(res.body.tagline, "New tagline");
-    assert.equal(res.body.clubName, "AI Club");
+    assert.equal(res.body.clubName, SEED_NAME);
     await editor.put("/api/v1/settings").send({ clubName: "" }).expect(400);
   });
 

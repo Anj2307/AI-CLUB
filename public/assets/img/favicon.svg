@@ -1,8 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="AI Club logo placeholder">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs>
-  <rect width="120" height="120" rx="28" fill="url(#g)"/>
-  <g stroke="#fff" stroke-width="3" fill="none" opacity=".9">
-    <path d="M30 40 L60 28 L90 40 M30 40 L60 60 L90 40 M30 40 L30 80 L60 92 L90 80 L90 40 M60 60 L60 92 M30 80 L60 60 L90 80"/>
-  </g>
-  <g fill="#fff"><circle cx="60" cy="28" r="5"/><circle cx="30" cy="40" r="5"/><circle cx="90" cy="40" r="5"/><circle cx="60" cy="60" r="6"/><circle cx="30" cy="80" r="5"/><circle cx="90" cy="80" r="5"/><circle cx="60" cy="92" r="5"/></g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Hardly Human logo placeholder">
+  <defs>
+    <linearGradient id="h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb08a"/><stop offset="1" stop-color="#ff5a36"/></linearGradient>
+    <linearGradient id="m" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9af3ff"/><stop offset="1" stop-color="#2fd8ff"/></linearGradient>
+    <linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7a4d"/><stop offset=".5" stop-color="#9b6bff"/><stop offset="1" stop-color="#2fd8ff"/></linearGradient>
+  </defs>
+  <rect x="1.5" y="1.5" width="117" height="117" rx="28" fill="#0c0c10" stroke="url(#b)" stroke-width="3"/>
+  <path d="M27 30 C 25 50, 29 70, 26 90 M 49 30 C 51 48, 47 72, 50 90 M 27 61 C 35 57, 42 63, 49 59" fill="none" stroke="url(#h)" stroke-width="7" stroke-linecap="round"/>
+  <rect x="62.5" y="28.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="1"/><rect x="62.5" y="37.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="1"/><rect x="62.5" y="46.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="1"/><rect x="62.5" y="55.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="1"/><rect x="62.5" y="64.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="1"/><rect x="62.5" y="73.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="1"/><rect x="62.5" y="82.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="0.55"/><rect x="86.5" y="28.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="0.35"/><rect x="86.5" y="37.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="0.7"/><rect x="86.5" y="46.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="1"/><rect x="86.5" y="55.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="1"/><rect x="86.5" y="64.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="1"/><rect x="86.5" y="73.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="1"/><rect x="86.5" y="82.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="0.25"/><rect x="71.5" y="55.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="1"/><rect x="77.5" y="55.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="1"/><rect x="95.5" y="46.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="0.4"/><rect x="100.5" y="37.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="0.18"/><rect x="95.5" y="28.5" width="7" height="7" rx="1.2" fill="url(#m)" opacity="0.12"/>
 </svg>

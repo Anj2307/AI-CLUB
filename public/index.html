@@ -3,64 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI Club | IIT Dharwad</title>
-  <meta name="description" content="AI Club of IIT Dharwad - a student community for machine learning, deep learning, computer vision, NLP and robotics.">
-  <meta name="theme-color" content="#05050c">
+  <title>Hardly Human | AI Club, IIT Dharwad</title>
+  <meta name="description" content="Hardly Human, the AI club of IIT Dharwad - a student community for machine learning, deep learning, computer vision, NLP and robotics.">
+  <meta name="theme-color" content="#08080a">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <script src="assets/js/core.js"></script>
 </head>
 <body>
 <main>
-  <section class="hero" id="hero">
+  <section class="hh-hero" id="hero">
     <div class="hero-glow" aria-hidden="true"></div>
     <div class="bg-grid" aria-hidden="true"></div>
-    <canvas id="net" aria-hidden="true"></canvas>
-    <div class="container hero-grid">
+    <div class="container hh-grid">
       <div>
-        <a class="announce" href="events.html" id="hero-announce"><b><span class="pulse-dot"></span>Next up</b><span id="hero-pill">Recruitments are open</span><i data-icon="arrow"></i></a>
-        <h1 class="hero-title"><span class="line"><span id="hero-club">AI Club</span></span><span class="line"><span class="grad-text" id="hero-inst">IIT Dharwad</span></span></h1>
-        <p class="hero-lead">We explore <span class="typed" id="typed">machine learning</span><br><span id="hero-tagline"></span></p>
+        <div class="hh-kicker"><span class="prompt">&gt;</span> <span id="hh-kicker">AI CLUB &middot; IIT DHARWAD</span><span class="caret"></span></div>
+        <h1 class="hh-title" id="hh-title" aria-label="Hardly Human">
+          <span class="line"><span class="human"><span class="human-word" id="hh-word-1">Hardly</span></span></span>
+          <span class="line"><span id="hh-word-2">Human</span><span style="color:var(--primary-2)">.</span></span>
+        </h1>
+        <p class="hh-lead">We build machines that see, listen, speak and reason &mdash; and spend a lot of time asking what's left that is <em>truly ours</em>.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="projects.html" data-magnetic>Explore projects <i data-icon="arrow"></i></a>
-          <a class="btn" href="events.html" data-magnetic>Upcoming events</a>
-        </div>
-        <div class="hero-meta">
-          <div class="avatar-stack" id="hero-avatars"></div>
-          <span><b id="hero-members">240+</b> students building with us</span>
+          <a class="btn btn-primary" href="projects.html" data-magnetic>See what we build <i data-icon="arrow"></i></a>
+          <a class="btn" href="#turing" data-magnetic>Take the Turing test</a>
         </div>
       </div>
 
-      <div class="orbit" data-tilt="10" aria-hidden="true">
-        <div class="orbit-glow"></div>
-        <div class="orbit-ring r1">
-          <span class="planet" style="--a:20deg;--r:50cqw"><span><i data-icon="brain"></i></span></span>
-          <span class="planet" style="--a:200deg;--r:50cqw"><span><i data-icon="bot"></i></span></span>
-        </div>
-        <div class="orbit-ring r2">
-          <span class="planet" style="--a:110deg;--r:36cqw"><span><i data-icon="eye"></i></span></span>
-          <span class="planet" style="--a:290deg;--r:36cqw"><span><i data-icon="message"></i></span></span>
-        </div>
-        <div class="orbit-ring r3">
-          <span class="planet" style="--a:60deg;--r:22cqw"><span><i data-icon="cpu"></i></span></span>
-        </div>
-        <div class="orbit-core"><img id="hero-logo" src="assets/img/logo-placeholder.svg" alt=""></div>
-        <div class="float-card fc1">
-          <span class="mono"><i data-icon="cpu"></i> Training model</span>
-          <b>Epoch 42</b>
-          <div class="bar"><i></i></div>
-        </div>
-        <div class="float-card fc2">
-          <span class="mono"><i data-icon="activity"></i> Validation</span>
-          <b>Loss falling</b>
-          <svg class="spark" viewBox="0 0 120 26" preserveAspectRatio="none"><path d="M2 4 C 20 6, 28 14, 44 13 S 70 20, 84 19 S 108 23, 118 22"/></svg>
+      <div class="portrait" id="portrait">
+        <canvas id="portrait-canvas" role="img" aria-label="A human profile made of particles that dissolves into a rotating machine sphere"></canvas>
+        <div class="portrait-ui">
+          <button class="mode-toggle" id="mode-toggle" type="button" aria-pressed="false">
+            <span class="h">human</span><span class="sw"></span><span class="m">machine</span>
+          </button>
+          <div class="portrait-coords" id="portrait-coords">x 0.000<br>y 0.000</div>
         </div>
       </div>
     </div>
-    <a class="scroll-cue" href="#about">Scroll</a>
+
+    <div class="hh-status" aria-label="Club status">
+      <div class="container">
+        <div class="cell"><span class="k">Model</span><span class="v">hardly-human v<span id="hh-version">2026</span></span></div>
+        <div class="cell"><span class="k">Parameters</span><span class="v"><span id="hh-members">240</span> humans</span></div>
+        <div class="cell"><span class="k">Training on</span><span class="v" id="hh-training">machine learning</span></div>
+        <div class="cell"><span class="k">Status</span><span class="v"><span class="dot"></span><span id="hh-state">learning</span></span></div>
+      </div>
+    </div>
   </section>
 
   <div class="ticker" aria-hidden="true">
@@ -68,11 +58,19 @@
     <div class="ticker-track rev" id="ticker-2"></div>
   </div>
 
+  <section class="manifesto" id="manifesto">
+    <div class="container">
+      <div class="eyebrow">Manifesto</div>
+      <p class="manifesto-text" id="manifesto-text">We are students who teach machines to see, to listen, to speak and to reason. Every model we train is a mirror &mdash; it shows us what we understand about intelligence, and everything we don't. We build things that are <em>hardly human</em>, so we can learn what being <em>human</em> really means. <span class="mac">// and we ship.</span></p>
+      <div class="manifesto-sign">&mdash; Hardly Human, IIT Dharwad</div>
+    </div>
+  </section>
+
   <section id="about">
     <div class="container about-grid">
       <div class="reveal">
         <div class="eyebrow">About the club</div>
-        <h2>A community of curious minds building <span class="grad-text">intelligent systems</span>.</h2>
+        <h2>Curious <em>humans</em>, building intelligent machines.</h2>
         <p class="lead" id="about-text"></p>
         <a class="btn" href="people.html" style="margin-top:10px">Meet the team <i data-icon="arrow"></i></a>
       </div>
@@ -83,7 +81,7 @@
   <section>
     <div class="container">
       <div class="section-head reveal">
-        <div><div class="eyebrow">What we do</div><h2>Focus areas</h2></div>
+        <div><div class="eyebrow">What we do</div><h2>Where we <em>tinker</em></h2></div>
         <p>Six tracks, one community. Pick one, or wander between them - most of our best projects sit where two meet.</p>
       </div>
       <div class="bento">
@@ -141,10 +139,31 @@
     </div>
   </section>
 
+  <section id="turing">
+    <div class="container turing">
+      <div class="reveal">
+        <div class="eyebrow">Interactive</div>
+        <h2>Human or <span class="machine">machine</span>?</h2>
+        <p class="muted">Six lines. Some were written by people who shaped computing; others were generated by an AI language model. Can you tell which is which?</p>
+        <div class="turing-score" id="turing-score">0/0</div>
+        <p class="small muted" id="turing-verdict">Your score appears here as you play.</p>
+      </div>
+      <div class="turing-card reveal d1" id="turing-card">
+        <div class="turing-meta"><span id="turing-round">Round 1 of 6</span><span class="turing-dots" id="turing-dots"></span></div>
+        <blockquote class="turing-quote" id="turing-quote"></blockquote>
+        <div class="turing-actions" id="turing-actions">
+          <button class="btn human" type="button" data-guess="human">Human</button>
+          <button class="btn machine" type="button" data-guess="machine">Machine</button>
+        </div>
+        <div class="turing-reveal" id="turing-reveal" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
   <section>
     <div class="container">
       <div class="section-head reveal">
-        <div><div class="eyebrow">Built by students</div><h2>Featured projects</h2></div>
+        <div><div class="eyebrow">Built by students</div><h2>Things we <em>made</em></h2></div>
         <a class="btn btn-ghost" href="projects.html">All projects <i data-icon="arrow"></i></a>
       </div>
       <div class="grid grid-3" id="home-projects"></div>
@@ -154,7 +173,7 @@
   <section>
     <div class="container">
       <div class="section-head reveal">
-        <div><div class="eyebrow">Get involved</div><h2>How to join</h2></div>
+        <div><div class="eyebrow">Get involved</div><h2>Become <em>hardly human</em></h2></div>
         <p>No prior experience needed. Curiosity is the only prerequisite.</p>
       </div>
       <div class="steps reveal">

@@ -1,5 +1,5 @@
 /*
- * AI Club IIT Dharwad - site content.
+ * Hardly Human (AI Club, IIT Dharwad) - site content.
  *
  * This is the single source of truth for everything shown on the site.
  * Edit it by hand, or use admin.html and click "Export data.js" to download
@@ -9,11 +9,11 @@
  */
 window.DEFAULT_SITE_DATA = {
   settings: {
-    clubName: "AI Club",
+    clubName: "Hardly Human",
     institute: "IIT Dharwad",
-    tagline: "Building intelligent systems, one neuron at a time.",
+    tagline: "The AI club of IIT Dharwad. We build machines that are hardly human - yet.",
     about:
-      "The AI Club of IIT Dharwad is a student-run community of learners, builders and researchers exploring machine learning, deep learning, computer vision, NLP, robotics and the ethics of AI. We run workshops, hackathons, reading groups and long-term research projects open to every student on campus.",
+      "Hardly Human is the AI club of IIT Dharwad - a student-run community of learners, builders and researchers exploring machine learning, deep learning, computer vision, NLP, robotics and the ethics of AI. We run workshops, hackathons, reading groups and long-term research projects open to every student on campus.",
     logo: "assets/img/logo-placeholder.svg",
     instituteLogo: "assets/img/iitdh-logo-placeholder.svg",
     email: "aiclub@iitdh.ac.in",
