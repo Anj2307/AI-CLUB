@@ -5,7 +5,7 @@ The official website of the AI Club, IIT Dharwad. It has a public site with ten 
 | | |
 |---|---|
 | **Frontend** | Plain HTML, CSS and JS with no build step. Light and dark themes, responsive, accessible. |
-| **Backend** | Node.js 22, Express 5, SQLite (better-sqlite3), zod validation |
+| **Backend** | Node.js 22.13+, Express 5, SQLite (built into Node, nothing to compile), zod validation |
 | **Auth** | bcrypt passwords, JWT in an HttpOnly cookie, `admin` and `editor` roles |
 | **Ops** | Dockerfile, docker compose with automatic HTTPS (Caddy), a Render blueprint, GitHub Actions CI, a backup script |
 

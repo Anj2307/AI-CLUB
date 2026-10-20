@@ -5,10 +5,10 @@ set -eu
 DEST="${1:-./backups}"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$DEST"
-# sqlite3 .backup takes a consistent snapshot even while the app is writing.
-docker compose exec -T app node -e "
-  const D=require('better-sqlite3');
-  new D('/app/data/aiclub.db',{readonly:true}).backup('/app/data/backup.db').then(()=>console.log('ok'));
+# VACUUM INTO writes a consistent snapshot even while the app is writing.
+docker compose exec -T app rm -f /app/data/backup.db
+docker compose exec -T app node --disable-warning=ExperimentalWarning -e "
+  new (require('node:sqlite').DatabaseSync)('/app/data/aiclub.db').exec(\"VACUUM INTO '/app/data/backup.db'\");
 "
 docker compose cp app:/app/data/backup.db "$DEST/aiclub-$STAMP.db"
 docker compose exec -T app tar -C /app/data -czf - uploads > "$DEST/uploads-$STAMP.tar.gz"

@@ -5,18 +5,17 @@
   "description": "AI Club IIT Dharwad - website and content API",
   "main": "server/src/index.js",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.13"
   },
   "scripts": {
-    "start": "node server/src/index.js",
-    "dev": "node --watch server/src/index.js",
-    "seed": "node server/src/db/seed.js",
-    "create-admin": "node server/src/cli/create-admin.js",
-    "test": "node --test server/test/*.test.js"
+    "start": "node --disable-warning=ExperimentalWarning server/src/index.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch server/src/index.js",
+    "seed": "node --disable-warning=ExperimentalWarning server/src/db/seed.js",
+    "create-admin": "node --disable-warning=ExperimentalWarning server/src/cli/create-admin.js",
+    "test": "node --disable-warning=ExperimentalWarning --test server/test/*.test.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
-    "better-sqlite3": "^13.0.3",
     "compression": "^1.8.2",
     "cookie-parser": "^1.4.7",
     "express": "^5.3.0",

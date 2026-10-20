@@ -10,8 +10,8 @@ function createUsersRepo(db) {
   const get = (id) => db.prepare(`SELECT ${PUBLIC_COLS} FROM users WHERE id = ?`).get(id) || null;
   const getAuth = (id) => db.prepare("SELECT id, role, name, token_version AS tokenVersion FROM users WHERE id = ?").get(id) || null;
   const findByEmailWithHash = (email) => db.prepare("SELECT * FROM users WHERE email = ?").get(email) || null;
-  const count = () => db.prepare("SELECT COUNT(*) FROM users").pluck().get();
-  const countAdmins = () => db.prepare("SELECT COUNT(*) FROM users WHERE role = 'admin'").pluck().get();
+  const count = () => db.scalar("SELECT COUNT(*) FROM users");
+  const countAdmins = () => db.scalar("SELECT COUNT(*) FROM users WHERE role = 'admin'");
 
   function create({ email, name, role, password }) {
     const id = newId("usr");

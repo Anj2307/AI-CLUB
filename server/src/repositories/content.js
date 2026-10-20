@@ -39,7 +39,7 @@ function createContentRepo(db) {
   function create(coll, data, { id, position } = {}) {
     const row = toRow(coll, { ...coll.defaults, ...data });
     row.id = id || newId(coll.name.slice(0, 3));
-    row.position = position ?? (db.prepare(`SELECT COALESCE(MIN(position), 0) - 1 FROM ${coll.table}`).pluck().get());
+    row.position = position ?? db.scalar(`SELECT COALESCE(MIN(position), 0) - 1 FROM ${coll.table}`);
     const cols = Object.keys(row);
     db.prepare(`INSERT INTO ${coll.table} (${cols.join(", ")}) VALUES (${cols.map((c) => "@" + c).join(", ")})`).run(row);
     return get(coll, row.id);
@@ -78,7 +78,7 @@ function createContentRepo(db) {
 
   function counts() {
     const out = {};
-    for (const coll of Object.values(COLLECTIONS)) out[coll.name] = db.prepare(`SELECT COUNT(*) FROM ${coll.table}`).pluck().get();
+    for (const coll of Object.values(COLLECTIONS)) out[coll.name] = db.scalar(`SELECT COUNT(*) FROM ${coll.table}`);
     return out;
   }
 
