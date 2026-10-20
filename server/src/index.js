@@ -6,23 +6,31 @@ const { createRepos } = require("./repositories");
 const { createApp } = require("./app");
 const { seedContent, ensureAdmin } = require("./db/seed");
 
-const connection = db.open();
-const repos = createRepos(connection);
-seedContent(repos);
-ensureAdmin(repos);
+const { createStorage } = require("./lib/storage");
 
-const server = createApp(repos).listen(config.port, config.host, () => {
-  log.info(`AI Club server listening on http://localhost:${config.port}`, { env: config.env });
-});
+(async () => {
+  const connection = await db.open();
+  const storage = createStorage();
+  const repos = createRepos(connection);
+  await seedContent(repos);
+  await ensureAdmin(repos);
 
-// Graceful shutdown: stop accepting connections, let in-flight requests finish, close the DB.
-function shutdown(signal) {
-  log.info(`${signal} received, shutting down`);
-  server.close(() => {
-    connection.close();
-    process.exit(0);
+  const server = createApp(repos, storage).listen(config.port, config.host, () => {
+    log.info(`AI Club server listening on http://localhost:${config.port}`, { env: config.env, db: connection.dialect, uploads: storage.kind });
   });
-  setTimeout(() => process.exit(1), 10000).unref();
-}
-process.on("SIGTERM", () => shutdown("SIGTERM"));
-process.on("SIGINT", () => shutdown("SIGINT"));
+
+  // Graceful shutdown: stop accepting connections, let in-flight requests finish, close the DB.
+  function shutdown(signal) {
+    log.info(`${signal} received, shutting down`);
+    server.close(async () => {
+      await connection.close();
+      process.exit(0);
+    });
+    setTimeout(() => process.exit(1), 10000).unref();
+  }
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
+})().catch((err) => {
+  log.error("Failed to start", { err: err.stack || String(err) });
+  process.exit(1);
+});

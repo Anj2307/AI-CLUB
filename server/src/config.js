@@ -33,7 +33,17 @@ const config = Object.freeze({
   publicDir: path.join(ROOT, "public"),
   dataDir,
   dbFile: env.DB_FILE || path.join(dataDir, "aiclub.db"),
+  // Postgres (e.g. Supabase) instead of the SQLite file. TLS is on unless the host is local; DATABASE_SSL overrides.
+  databaseUrl: env.DATABASE_URL || "",
+  databaseSsl: env.DATABASE_SSL ? env.DATABASE_SSL !== "false" : null,
+  databasePoolSize: int("DATABASE_POOL_SIZE", 5),
   uploadDir: path.resolve(ROOT, env.UPLOAD_DIR || path.join(dataDir, "uploads")),
+  // Supabase Storage for uploaded images instead of UPLOAD_DIR (needs a public bucket).
+  supabase: {
+    url: (env.SUPABASE_URL || "").replace(/\/+$/, ""),
+    serviceKey: env.SUPABASE_SERVICE_KEY || "",
+    bucket: env.SUPABASE_BUCKET || "uploads"
+  },
   maxUploadMb: int("MAX_UPLOAD_MB", 8),
   jwtSecret,
   sessionHours: int("SESSION_HOURS", 12),

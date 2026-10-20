@@ -31,16 +31,19 @@ function clearSession(res) {
 // Resolves req.user from the session cookie (or a Bearer token for scripts).
 // The token_version check lets password/role changes revoke existing sessions.
 function authenticate(repos) {
-  return (req, _res, next) => {
+  return async (req, _res, next) => {
     const header = req.get("authorization");
     const token = req.cookies?.[COOKIE] || (header?.startsWith("Bearer ") ? header.slice(7) : null);
     if (!token) return next();
+    let payload;
     try {
-      const payload = jwt.verify(token, config.jwtSecret, { issuer: "aiclub-api" });
-      const user = repos.users.getAuth(payload.sub);
+      payload = jwt.verify(token, config.jwtSecret, { issuer: "aiclub-api" });
+    } catch { return next(); /* invalid or expired - treat as anonymous */ }
+    try {
+      const user = await repos.users.getAuth(payload.sub);
       if (user && user.tokenVersion === payload.v) req.user = user;
-    } catch { /* invalid or expired - treat as anonymous */ }
-    next();
+      next();
+    } catch (err) { next(err); }
   };
 }
 

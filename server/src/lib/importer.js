@@ -3,7 +3,7 @@ const { COLLECTIONS, SETTINGS } = require("./schemas");
 const { badRequest } = require("./errors");
 
 // Validates a full-site snapshot ({ settings, people, projects, ... }) and replaces all content atomically.
-function importSnapshot(repos, snapshot) {
+async function importSnapshot(repos, snapshot) {
   if (!snapshot || typeof snapshot !== "object") throw badRequest("Expected a JSON object");
   const problems = [];
   const parsed = {};
@@ -23,14 +23,14 @@ function importSnapshot(repos, snapshot) {
   }
   if (problems.length) throw badRequest("Import failed validation", problems.slice(0, 20));
 
-  repos.db.transaction(() => {
-    repos.settings.replaceAll(parsed.settings);
-    for (const coll of Object.values(COLLECTIONS)) repos.content.replaceAll(coll, parsed[coll.name]);
-  })();
+  await repos.db.transaction(async () => {
+    await repos.settings.replaceAll(parsed.settings);
+    for (const coll of Object.values(COLLECTIONS)) await repos.content.replaceAll(coll, parsed[coll.name]);
+  });
 }
 
-function exportSnapshot(repos) {
-  return { settings: repos.settings.getAll(), ...repos.content.snapshot() };
+async function exportSnapshot(repos) {
+  return { settings: await repos.settings.getAll(), ...(await repos.content.snapshot()) };
 }
 
 module.exports = { importSnapshot, exportSnapshot };

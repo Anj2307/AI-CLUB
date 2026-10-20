@@ -1,9 +1,11 @@
-# One-click deploy on Render (https://render.com) - uses the Dockerfile and a persistent disk.
+# Deploy on Render (https://render.com) using the Dockerfile.
+# Data lives in Supabase (Postgres + Storage), so the free plan works: restarts and redeploys
+# no longer wipe anything. Fill in the sync:false values in the Render dashboard.
 services:
   - type: web
     name: aiclub-iitdh
     runtime: docker
-    plan: starter
+    plan: free
     healthCheckPath: /api/v1/health
     envVars:
       - key: NODE_ENV
@@ -12,9 +14,13 @@ services:
         generateValue: true
       - key: ADMIN_EMAIL
         value: aiclub@iitdh.ac.in
-      - key: DATA_DIR
-        value: /app/data
-    disk:
-      name: aiclub-data
-      mountPath: /app/data
-      sizeGB: 1
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SUPABASE_BUCKET
+        value: uploads

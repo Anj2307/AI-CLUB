@@ -474,7 +474,8 @@ document.addEventListener("site:ready", () => {
     document.getElementById("media").addEventListener("click", async (e) => {
       const c = e.target.closest("[data-copy]"), d = e.target.closest("[data-del]");
       if (c) {
-        const url = new URL(c.dataset.copy, location.href).pathname;
+        const link = new URL(c.dataset.copy, location.href);
+        const url = link.origin === location.origin ? link.pathname : link.href; // Supabase Storage links are absolute
         try { await navigator.clipboard.writeText(url); toast("Link copied"); } catch { prompt("Copy this link:", url); }
       } else if (d && confirm("Delete this image? Pages still using it will show a broken image.")) {
         try { await api("/uploads/" + d.dataset.del, { method: "DELETE" }); paint(); } catch (ex) { handleError(ex); }

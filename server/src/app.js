@@ -9,9 +9,11 @@ const log = require("./logger");
 const { authenticate } = require("./middleware/auth");
 const { sameOrigin, cors, apiLimiter } = require("./middleware/security");
 const { notFoundApi, errorHandler } = require("./middleware/errors");
+const { createStorage } = require("./lib/storage");
 
-// Builds the Express app around an already-open set of repositories (so tests can use an in-memory DB).
-function createApp(repos) {
+// Builds the Express app around an already-open set of repositories (so tests can use an in-memory DB)
+// and an upload storage backend (local disk unless Supabase Storage is configured).
+function createApp(repos, storage = createStorage()) {
   const app = express();
   app.disable("x-powered-by");
   app.set("trust proxy", /^\d+$/.test(config.trustProxy) ? Number(config.trustProxy) : config.trustProxy);
@@ -56,7 +58,7 @@ function createApp(repos) {
   api.use("/auth", require("./routes/auth")(repos));
   api.use("/messages", require("./routes/messages")(repos));
   api.use("/users", require("./routes/users")(repos));
-  api.use("/uploads", require("./routes/uploads")(repos));
+  api.use("/uploads", require("./routes/uploads")(repos, storage));
   api.use("/admin", require("./routes/admin")(repos));
   api.use(require("./routes/content")(repos));
   api.use(notFoundApi);

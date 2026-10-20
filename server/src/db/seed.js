@@ -21,23 +21,23 @@ function loadStaticData() {
   return sandbox.window.DEFAULT_SITE_DATA;
 }
 
-function seedContent(repos, { force = false } = {}) {
-  const counts = repos.content.counts();
-  const empty = Object.values(counts).every((n) => n === 0) && !Object.keys(repos.settings.getAll()).length;
+async function seedContent(repos, { force = false } = {}) {
+  const counts = await repos.content.counts();
+  const empty = Object.values(counts).every((n) => n === 0) && !Object.keys(await repos.settings.getAll()).length;
   if (!empty && !force) return false;
-  importSnapshot(repos, loadStaticData());
+  await importSnapshot(repos, loadStaticData());
   log.info("Seeded content from data.js");
   return true;
 }
 
 // First boot: create an admin from ADMIN_EMAIL / ADMIN_PASSWORD, or generate a password and print it once.
-function ensureAdmin(repos) {
-  if (repos.users.count() > 0) return null;
+async function ensureAdmin(repos) {
+  if (await repos.users.count() > 0) return null;
   const { email, name } = config.bootstrapAdmin;
   let password = config.bootstrapAdmin.password;
   const generated = !password;
   if (generated) password = crypto.randomBytes(12).toString("base64url");
-  repos.users.create({ email, name, role: "admin", password });
+  await repos.users.create({ email, name, role: "admin", password });
   if (generated) {
     log.warn("Created initial admin account - change this password after signing in", { email, password });
   } else {
@@ -47,13 +47,16 @@ function ensureAdmin(repos) {
 }
 
 if (require.main === module) {
-  const { open } = require("./index");
-  const { createRepos } = require("../repositories");
-  const repos = createRepos(open());
-  const force = process.argv.includes("--force");
-  const did = seedContent(repos, { force });
-  ensureAdmin(repos);
-  console.log(did ? "Content seeded." : "Database already has content - use --force to overwrite.");
+  (async () => {
+    const { open } = require("./index");
+    const { createRepos } = require("../repositories");
+    const db = await open();
+    const repos = createRepos(db);
+    const did = await seedContent(repos, { force: process.argv.includes("--force") });
+    await ensureAdmin(repos);
+    await db.close();
+    console.log(did ? "Content seeded." : "Database already has content - use --force to overwrite.");
+  })();
 }
 
 module.exports = { seedContent, ensureAdmin, loadStaticData };

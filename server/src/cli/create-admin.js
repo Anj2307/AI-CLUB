@@ -24,13 +24,15 @@ const { PASSWORD } = require("../lib/schemas");
   const check = PASSWORD.safeParse(password);
   if (!check.success) { console.error(check.error.issues[0].message); process.exit(1); }
 
-  const repos = createRepos(db.open());
-  const existing = repos.users.findByEmailWithHash(email);
+  const connection = await db.open();
+  const repos = createRepos(connection);
+  const existing = await repos.users.findByEmailWithHash(email);
   if (existing) {
-    repos.users.update(existing.id, { role: "admin", password });
+    await repos.users.update(existing.id, { role: "admin", password });
     console.log(`Updated ${email}: role=admin, password reset.`);
   } else {
-    repos.users.create({ email, name, role: "admin", password });
+    await repos.users.create({ email, name, role: "admin", password });
     console.log(`Created admin ${email}.`);
   }
+  await connection.close();
 })();

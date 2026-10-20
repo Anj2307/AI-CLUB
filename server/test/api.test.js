@@ -2,7 +2,7 @@
 process.env.NODE_ENV = "test";
 process.env.UPLOAD_DIR = require("node:path").join(require("node:os").tmpdir(), `aiclub-test-uploads-${process.pid}`);
 
-const { test, describe, before } = require("node:test");
+const { test, describe, before, after } = require("node:test");
 const assert = require("node:assert/strict");
 const request = require("supertest");
 const db = require("../src/db");
@@ -13,12 +13,18 @@ const { seedContent } = require("../src/db/seed");
 const ADMIN = { email: "admin@test.dev", password: "correct-horse-battery" };
 const EDITOR = { email: "editor@test.dev", password: "editor-password-1" };
 
-function setup() {
-  const repos = createRepos(db.open(":memory:"));
-  seedContent(repos);
-  repos.users.create({ ...ADMIN, name: "Admin", role: "admin" });
-  repos.users.create({ ...EDITOR, name: "Editor", role: "editor" });
-  return { repos, app: createApp(repos) };
+// TEST_DATABASE_URL runs the same suite against Postgres; otherwise each block gets a fresh in-memory SQLite.
+async function setup() {
+  const conn = await db.open(process.env.TEST_DATABASE_URL || ":memory:");
+  if (conn.dialect === "postgres") {
+    await conn.exec("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
+    await db.migrate(conn);
+  }
+  const repos = createRepos(conn);
+  await seedContent(repos);
+  await repos.users.create({ ...ADMIN, name: "Admin", role: "admin" });
+  await repos.users.create({ ...EDITOR, name: "Editor", role: "editor" });
+  return { conn, repos, app: createApp(repos) };
 }
 
 async function login(app, creds) {
@@ -28,7 +34,9 @@ async function login(app, creds) {
 }
 
 describe("public API", () => {
-  const { app } = setup();
+  let app, conn;
+  before(async () => ({ app, conn } = await setup()));
+  after(() => conn.close());
 
   test("health check reports ok", async () => {
     const res = await request(app).get("/api/v1/health").expect(200);
@@ -71,7 +79,9 @@ describe("public API", () => {
 });
 
 describe("auth", () => {
-  const { app } = setup();
+  let app, conn;
+  before(async () => ({ app, conn } = await setup()));
+  after(() => conn.close());
 
   test("rejects a wrong password with a generic message", async () => {
     const res = await request(app).post("/api/v1/auth/login").send({ ...ADMIN, password: "wrong" }).expect(401);
@@ -104,7 +114,9 @@ describe("auth", () => {
 });
 
 describe("content management", () => {
-  const { app } = setup();
+  let app, conn;
+  before(async () => ({ app, conn } = await setup()));
+  after(() => conn.close());
   let editor;
   before(async () => { editor = await login(app, EDITOR); });
 
@@ -155,7 +167,9 @@ describe("content management", () => {
 });
 
 describe("uploads", () => {
-  const { app } = setup();
+  let app, conn;
+  before(async () => ({ app, conn } = await setup()));
+  after(() => conn.close());
   const PNG = Buffer.from("89504e470d0a1a0a0000000d4948445200000001000000010806000000" + "1f15c4890000000d49444154789c63000100000500010d0a2db40000000049454e44ae426082", "hex");
 
   test("accepts a real image and serves it", async () => {
@@ -173,7 +187,9 @@ describe("uploads", () => {
 });
 
 describe("users & backup", () => {
-  const { app } = setup();
+  let app, conn;
+  before(async () => ({ app, conn } = await setup()));
+  after(() => conn.close());
   let admin;
   before(async () => { admin = await login(app, ADMIN); });
 

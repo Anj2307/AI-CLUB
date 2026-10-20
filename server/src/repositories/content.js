@@ -27,58 +27,56 @@ function createContentRepo(db) {
     return out;
   }
 
-  function list(coll) {
-    return db.prepare(`SELECT * FROM ${coll.table} ORDER BY ${coll.orderBy}`).all().map((r) => fromRow(coll, r));
+  async function list(coll) {
+    return (await db.all(`SELECT * FROM ${coll.table} ORDER BY ${coll.orderBy}`)).map((r) => fromRow(coll, r));
   }
 
-  function get(coll, id) {
-    return fromRow(coll, db.prepare(`SELECT * FROM ${coll.table} WHERE id = ?`).get(id));
+  async function get(coll, id) {
+    return fromRow(coll, await db.get(`SELECT * FROM ${coll.table} WHERE id = ?`, [id]));
   }
 
   // New items go to the top of manually-ordered lists.
-  function create(coll, data, { id, position } = {}) {
+  async function create(coll, data, { id, position } = {}) {
     const row = toRow(coll, { ...coll.defaults, ...data });
     row.id = id || newId(coll.name.slice(0, 3));
-    row.position = position ?? db.scalar(`SELECT COALESCE(MIN(position), 0) - 1 FROM ${coll.table}`);
+    row.position = position ?? await db.scalar(`SELECT COALESCE(MIN(position), 0) - 1 FROM ${coll.table}`);
     const cols = Object.keys(row);
-    db.prepare(`INSERT INTO ${coll.table} (${cols.join(", ")}) VALUES (${cols.map((c) => "@" + c).join(", ")})`).run(row);
+    await db.run(`INSERT INTO ${coll.table} (${cols.join(", ")}) VALUES (${cols.map(() => "?").join(", ")})`, Object.values(row));
     return get(coll, row.id);
   }
 
-  function update(coll, id, data) {
+  async function update(coll, id, data) {
     const row = toRow(coll, data);
     const cols = Object.keys(row);
     if (!cols.length) return get(coll, id);
-    row.id = id;
-    row.updated_at = now();
-    const res = db.prepare(`UPDATE ${coll.table} SET ${cols.map((c) => `${c} = @${c}`).join(", ")}, updated_at = @updated_at WHERE id = @id`).run(row);
+    const res = await db.run(`UPDATE ${coll.table} SET ${cols.map((c) => `${c} = ?`).join(", ")}, updated_at = ? WHERE id = ?`,
+      [...Object.values(row), now(), id]);
     return res.changes ? get(coll, id) : null;
   }
 
-  function remove(coll, id) {
-    return db.prepare(`DELETE FROM ${coll.table} WHERE id = ?`).run(id).changes > 0;
+  async function remove(coll, id) {
+    return (await db.run(`DELETE FROM ${coll.table} WHERE id = ?`, [id])).changes > 0;
   }
 
   // ids: the full desired order. Unknown ids are ignored; missing ones keep relative order after.
-  const reorder = (coll, ids) => db.transaction(() => {
-    const stmt = db.prepare(`UPDATE ${coll.table} SET position = ? WHERE id = ?`);
-    ids.forEach((id, i) => stmt.run(i, id));
-  })();
+  const reorder = (coll, ids) => db.transaction(async () => {
+    for (const [i, id] of ids.entries()) await db.run(`UPDATE ${coll.table} SET position = ? WHERE id = ?`, [i, id]);
+  });
 
-  function replaceAll(coll, items) {
-    db.prepare(`DELETE FROM ${coll.table}`).run();
-    items.forEach((item, i) => create(coll, item, { id: item.id, position: i }));
+  async function replaceAll(coll, items) {
+    await db.run(`DELETE FROM ${coll.table}`);
+    for (const [i, item] of items.entries()) await create(coll, item, { id: item.id, position: i });
   }
 
-  function snapshot() {
+  async function snapshot() {
     const out = {};
-    for (const coll of Object.values(COLLECTIONS)) out[coll.name] = list(coll);
+    for (const coll of Object.values(COLLECTIONS)) out[coll.name] = await list(coll);
     return out;
   }
 
-  function counts() {
+  async function counts() {
     const out = {};
-    for (const coll of Object.values(COLLECTIONS)) out[coll.name] = db.scalar(`SELECT COUNT(*) FROM ${coll.table}`);
+    for (const coll of Object.values(COLLECTIONS)) out[coll.name] = Number(await db.scalar(`SELECT COUNT(*) FROM ${coll.table}`));
     return out;
   }
 

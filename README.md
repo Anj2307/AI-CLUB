@@ -5,7 +5,7 @@ The official website of the AI Club, IIT Dharwad. It has a public site with ten 
 | | |
 |---|---|
 | **Frontend** | Plain HTML, CSS and JS with no build step. Light and dark themes, responsive, accessible. |
-| **Backend** | Node.js 22.13+, Express 5, SQLite (built into Node, nothing to compile), zod validation |
+| **Backend** | Node.js 22.13+, Express 5, SQLite (built into Node) or Postgres/Supabase via `DATABASE_URL`, zod validation |
 | **Auth** | bcrypt passwords, JWT in an HttpOnly cookie, `admin` and `editor` roles |
 | **Ops** | Dockerfile, docker compose with automatic HTTPS (Caddy), a Render blueprint, GitHub Actions CI, a backup script |
 
@@ -55,7 +55,20 @@ For nightly backups, add `deploy/backup.sh` to cron (see the comment at the top 
 
 ### Option B: Render (managed, no server to maintain)
 
-Create a new Blueprint from this repository. `render.yaml` sets up the service, a persistent disk and a generated `JWT_SECRET`. Set `ADMIN_PASSWORD` in the dashboard before the first deploy.
+Render's free plan has no persistent disk: every restart, redeploy or wake-from-sleep starts with an empty filesystem. So on Render, keep the data in **Supabase** (free Postgres + file storage) instead of the local SQLite file.
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. **Storage** → New bucket → name it `uploads` and tick **Public bucket**.
+3. **Connect** (top bar) → copy the **Session pooler** connection string and put your database password in it.
+4. **Project Settings → API** → copy the **Project URL** and the **service_role** key.
+5. On Render, create a Blueprint from this repository (`render.yaml`), or a Docker web service, and set:
+   - `DATABASE_URL` = the Session pooler string
+   - `SUPABASE_URL` = the Project URL
+   - `SUPABASE_SERVICE_KEY` = the service_role key (secret, never put it in frontend code)
+   - `ADMIN_PASSWORD` = the first admin's password
+   - `JWT_SECRET` = a long random string (the Blueprint generates one)
+
+On first start the app creates its tables in Supabase and fills them from `data.js`. After that, admin edits are stored in Supabase and survive restarts. Without `DATABASE_URL` the app keeps using SQLite under `DATA_DIR`, which still suits local development or a server with a real disk.
 
 ### Option C: static only (GitHub Pages)
 

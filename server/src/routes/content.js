@@ -13,10 +13,10 @@ const titleOf = (item) => item?.title || item?.name || item?.caption || item?.id
 module.exports = function contentRoutes(repos) {
   const r = express.Router();
 
-  r.put("/settings", canEdit, validate(SETTINGS), (req, res) => {
-    repos.settings.set(req.body);
-    repos.audit.record(req.user, "update", "settings", null, Object.keys(req.body).join(", "));
-    res.json(repos.settings.getAll());
+  r.put("/settings", canEdit, validate(SETTINGS), async (req, res) => {
+    await repos.settings.set(req.body);
+    await repos.audit.record(req.user, "update", "settings", null, Object.keys(req.body).join(", "));
+    res.json(await repos.settings.getAll());
   });
 
   r.param("collection", (req, _res, next, name) => {
@@ -24,37 +24,37 @@ module.exports = function contentRoutes(repos) {
     next(req.coll ? undefined : notFound(`Unknown collection "${name}"`));
   });
 
-  r.get("/:collection", (req, res) => res.json({ items: repos.content.list(req.coll) }));
+  r.get("/:collection", async (req, res) => res.json({ items: await repos.content.list(req.coll) }));
 
-  r.get("/:collection/:id", (req, res) => {
-    const item = repos.content.get(req.coll, req.params.id);
+  r.get("/:collection/:id", async (req, res) => {
+    const item = await repos.content.get(req.coll, req.params.id);
     if (!item) throw notFound();
     res.json(item);
   });
 
-  r.post("/:collection", canEdit, (req, res, next) => validate(req.coll.create)(req, res, next), (req, res) => {
-    const item = repos.content.create(req.coll, req.body);
-    repos.audit.record(req.user, "create", req.coll.name, item.id, titleOf(item));
+  r.post("/:collection", canEdit, (req, res, next) => validate(req.coll.create)(req, res, next), async (req, res) => {
+    const item = await repos.content.create(req.coll, req.body);
+    await repos.audit.record(req.user, "create", req.coll.name, item.id, titleOf(item));
     res.status(201).location(`${req.baseUrl}/${req.coll.name}/${item.id}`).json(item);
   });
 
-  r.post("/:collection/reorder", canEdit, validate(REORDER), (req, res) => {
-    repos.content.reorder(req.coll, req.body.ids);
-    repos.audit.record(req.user, "reorder", req.coll.name, null, `${req.body.ids.length} items`);
-    res.json({ items: repos.content.list(req.coll) });
+  r.post("/:collection/reorder", canEdit, validate(REORDER), async (req, res) => {
+    await repos.content.reorder(req.coll, req.body.ids);
+    await repos.audit.record(req.user, "reorder", req.coll.name, null, `${req.body.ids.length} items`);
+    res.json({ items: await repos.content.list(req.coll) });
   });
 
-  r.patch("/:collection/:id", canEdit, (req, res, next) => validate(req.coll.update)(req, res, next), (req, res) => {
-    const item = repos.content.update(req.coll, req.params.id, req.body);
+  r.patch("/:collection/:id", canEdit, (req, res, next) => validate(req.coll.update)(req, res, next), async (req, res) => {
+    const item = await repos.content.update(req.coll, req.params.id, req.body);
     if (!item) throw notFound();
-    repos.audit.record(req.user, "update", req.coll.name, item.id, titleOf(item));
+    await repos.audit.record(req.user, "update", req.coll.name, item.id, titleOf(item));
     res.json(item);
   });
 
-  r.delete("/:collection/:id", canEdit, (req, res) => {
-    const item = repos.content.get(req.coll, req.params.id);
-    if (!item || !repos.content.remove(req.coll, req.params.id)) throw notFound();
-    repos.audit.record(req.user, "delete", req.coll.name, req.params.id, titleOf(item));
+  r.delete("/:collection/:id", canEdit, async (req, res) => {
+    const item = await repos.content.get(req.coll, req.params.id);
+    if (!item || !await repos.content.remove(req.coll, req.params.id)) throw notFound();
+    await repos.audit.record(req.user, "delete", req.coll.name, req.params.id, titleOf(item));
     res.status(204).end();
   });
 

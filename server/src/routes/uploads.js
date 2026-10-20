@@ -1,6 +1,4 @@
 "use strict";
-const fs = require("node:fs");
-const path = require("node:path");
 const express = require("express");
 const multer = require("multer");
 const config = require("../config");
@@ -19,38 +17,38 @@ const SIGNATURES = [
   { mime: "image/svg+xml", ext: ".svg", test: (b) => /^\s*(<\?xml[^>]*>\s*)?(<!--[\s\S]*?-->\s*)*<svg[\s>]/i.test(b.subarray(0, 1024).toString("utf8")) }
 ];
 
-module.exports = function uploadRoutes(repos) {
+// storage: where files go (local disk or Supabase Storage, see lib/storage.js).
+module.exports = function uploadRoutes(repos, storage) {
   const r = express.Router();
   r.use(requireRole("admin", "editor"));
-  fs.mkdirSync(config.uploadDir, { recursive: true });
 
   const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: config.maxUploadMb * 1024 * 1024, files: 1 }
   });
 
-  r.post("/", upload.single("file"), (req, res) => {
+  r.post("/", upload.single("file"), async (req, res) => {
     if (!req.file) throw badRequest('Attach an image in the "file" field');
     const kind = SIGNATURES.find((s) => s.test(req.file.buffer));
     if (!kind) throw badRequest("Only PNG, JPEG, GIF, WebP, AVIF or SVG images are allowed");
     const id = newId("upl");
     const filename = id + kind.ext;
-    fs.writeFileSync(path.join(config.uploadDir, filename), req.file.buffer, { flag: "wx" });
-    repos.uploads.create({
+    await storage.save(filename, req.file.buffer, kind.mime);
+    await repos.uploads.create({
       id, filename, originalName: req.file.originalname.slice(0, 200), mime: kind.mime, size: req.file.size, uploadedBy: req.user.id
     });
-    repos.audit.record(req.user, "upload", "uploads", id, req.file.originalname);
-    res.status(201).json({ id, url: `/uploads/${filename}`, mime: kind.mime, size: req.file.size });
+    await repos.audit.record(req.user, "upload", "uploads", id, req.file.originalname);
+    res.status(201).json({ id, url: storage.urlFor(filename), mime: kind.mime, size: req.file.size });
   });
 
-  r.get("/", (_req, res) => res.json({ items: repos.uploads.list().map((u) => ({ ...u, url: `/uploads/${u.filename}` })) }));
+  r.get("/", async (_req, res) => res.json({ items: (await repos.uploads.list()).map((u) => ({ ...u, url: storage.urlFor(u.filename) })) }));
 
-  r.delete("/:id", (req, res) => {
-    const u = repos.uploads.get(req.params.id);
+  r.delete("/:id", async (req, res) => {
+    const u = await repos.uploads.get(req.params.id);
     if (!u) throw notFound();
-    fs.rmSync(path.join(config.uploadDir, path.basename(u.filename)), { force: true });
-    repos.uploads.remove(u.id);
-    repos.audit.record(req.user, "delete", "uploads", u.id, u.original_name);
+    await storage.remove(u.filename);
+    await repos.uploads.remove(u.id);
+    await repos.audit.record(req.user, "delete", "uploads", u.id, u.original_name);
     res.status(204).end();
   });
 
