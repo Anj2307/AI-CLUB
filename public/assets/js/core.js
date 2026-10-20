@@ -211,7 +211,7 @@
       <div class="container nav-wrap">
         <a class="brand" href="index.html" aria-label="${esc(s.clubName)} home">
           <img src="${esc(s.logo)}" alt="" class="brand-logo">
-          <span class="brand-text"><strong>${esc(s.clubName)}</strong><small>AI Club &middot; ${esc(s.institute)}</small></span>
+          <span class="brand-text"><strong>${esc(s.clubName)}</strong><small>${esc(s.institute)}</small></span>
         </a>
         <nav class="nav" id="site-nav" aria-label="Main">
           <span class="nav-pill" aria-hidden="true"></span>
@@ -234,7 +234,7 @@
     footer.innerHTML = `
       <div class="container">
         <div class="footer-cta">
-          <h2>Let's build something <em>hardly human</em>.</h2>
+          <h2>Let's build something <span class="grad-text">intelligent</span>.</h2>
           <div class="hero-cta" style="margin:0">
             <a class="btn btn-primary" href="${esc(s.joinLink)}" target="_blank" rel="noopener" data-magnetic>Become a member ${icon("arrowUpRight")}</a>
             <a class="btn" href="contact.html">Talk to us</a>
@@ -244,7 +244,7 @@
           <div>
             <a class="brand" href="index.html">
               <img src="${esc(s.logo)}" alt="" class="brand-logo">
-              <span class="brand-text"><strong>${esc(s.clubName)}</strong><small>AI Club &middot; ${esc(s.institute)}</small></span>
+              <span class="brand-text"><strong>${esc(s.clubName)}</strong><small>${esc(s.institute)}</small></span>
             </a>
             <p class="muted footer-tag">${esc(s.tagline)}</p>
             <div class="socials">${socialLinks(s.socials, s.email)}</div>
@@ -263,7 +263,7 @@
             <img src="${esc(s.instituteLogo)}" alt="${esc(s.institute)} logo" class="inst-logo">
           </div>
         </div>
-        <div class="footer-wordmark" aria-hidden="true">${wordmark(s.clubName)}</div>
+        <div class="footer-wordmark" aria-hidden="true">${esc(s.clubName)}</div>
         <div class="footer-bottom">
           <span>&copy; ${new Date().getFullYear()} ${esc(s.clubName)}, ${esc(s.institute)}</span>
           <span class="mono">Made by students, for students.</span>
@@ -418,108 +418,6 @@
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k" && !document.body.hasAttribute("data-no-layout")) { e.preventDefault(); openPalette(); }
     if (e.key === "/" && !/input|textarea|select/i.test(document.activeElement.tagName) && !document.body.hasAttribute("data-no-layout")) { e.preventDefault(); openPalette(); }
   });
-
-  // First word in the serif "human" voice, the rest in the display face: "<em>Hardly</em> Human".
-  function wordmark(name) {
-    const parts = String(name || "").trim().split(/\s+/);
-    if (parts.length < 2) return esc(name);
-    return `<em>${esc(parts[0])}</em> ${esc(parts.slice(1).join(" "))}`;
-  }
-
-  // ---------- text scramble ----------
-  // Resolves text from random glyphs, left to right - the "machine" decoding a human word.
-  const GLYPHS = "01<>/\\[]{}=+*#%$&@ABCDEFGHJKLMNPQRSTUVWXYZ";
-  function scramble(el, text, opts) {
-    const final = text == null ? el.textContent : text;
-    if (reduceMotion()) { el.textContent = final; return; }
-    const dur = (opts && opts.duration) || 900;
-    const start = performance.now();
-    if (el._scrambleRaf) cancelAnimationFrame(el._scrambleRaf);
-    const step = (t) => {
-      const p = Math.min(1, (t - start) / dur);
-      const settled = Math.floor(final.length * p);
-      let out = final.slice(0, settled);
-      for (let i = settled; i < final.length; i++) out += final[i] === " " ? " " : GLYPHS[(Math.random() * GLYPHS.length) | 0];
-      el.textContent = out;
-      if (p < 1) el._scrambleRaf = requestAnimationFrame(step);
-    };
-    el._scrambleRaf = requestAnimationFrame(step);
-  }
-  // Section labels decode the first time they scroll into view.
-  function observeScramble(root) {
-    if (!("IntersectionObserver" in window)) return;
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((en) => {
-        if (!en.isIntersecting) return;
-        io.unobserve(en.target);
-        scramble(en.target, en.target.dataset.text, { duration: 700 });
-      });
-    }, { threshold: 0.6 });
-    (root || document).querySelectorAll(".eyebrow:not([data-text])").forEach((el) => {
-      if (el.children.length) return; // only plain-text labels
-      el.dataset.text = el.textContent;
-      io.observe(el);
-    });
-  }
-
-  // ---------- custom cursor ring (native cursor stays visible) ----------
-  function initCursor() {
-    if (!finePointer() || reduceMotion()) return;
-    const ring = document.createElement("div");
-    ring.className = "cursor-ring";
-    ring.setAttribute("aria-hidden", "true");
-    document.body.append(ring);
-    let x = -100, y = -100, rx = -100, ry = -100;
-    document.addEventListener("pointermove", (e) => {
-      x = e.clientX; y = e.clientY;
-      ring.classList.add("on");
-      ring.classList.toggle("hover", !!(e.target.closest && e.target.closest("a, button, [role=button], .card, input, select, textarea, label, summary")));
-    }, { passive: true });
-    document.addEventListener("pointerdown", () => ring.classList.add("down"));
-    document.addEventListener("pointerup", () => ring.classList.remove("down"));
-    document.documentElement.addEventListener("pointerleave", () => ring.classList.remove("on"));
-    const loop = () => {
-      rx += (x - rx) * 0.2; ry += (y - ry) * 0.2;
-      ring.style.transform = `translate(${rx.toFixed(1)}px, ${ry.toFixed(1)}px)`;
-      requestAnimationFrame(loop);
-    };
-    loop();
-  }
-
-  // ---------- boot sequence: home page, first visit per browser session ----------
-  function bootSequence() {
-    const isHome = !!document.getElementById("portrait");
-    let seen = false;
-    try { seen = sessionStorage.getItem("hh-booted") === "1"; sessionStorage.setItem("hh-booted", "1"); } catch (e) { seen = true; }
-    if (!isHome || seen || reduceMotion()) return Promise.resolve();
-    const lines = [
-      '<span class="mac">&gt;</span> boot hardly_human --campus=iit-dharwad',
-      'loading curiosity ............... <span class="ok">ok</span>',
-      'loading coffee .................. <span class="ok">ok</span>',
-      'calibrating <span class="hum">empathy</span> ........... <span class="ok">ok</span>',
-      'humanity check .................. <span class="hum">mostly</span>'
-    ];
-    const el = document.createElement("div");
-    el.className = "boot";
-    el.setAttribute("aria-hidden", "true");
-    el.innerHTML = `<div class="boot-inner">${lines.map((l) => `<div class="boot-line">${l}</div>`).join("")}<div class="boot-bar"><i></i></div><div class="boot-skip">click to skip</div></div>`;
-    document.body.append(el);
-    return new Promise((resolve) => {
-      let finished = false;
-      const finish = () => {
-        if (finished) return;
-        finished = true;
-        el.classList.add("done");
-        resolve();
-        setTimeout(() => el.remove(), 700);
-      };
-      el.addEventListener("click", finish);
-      const rows = el.querySelectorAll(".boot-line");
-      rows.forEach((r, i) => setTimeout(() => r.classList.add("on"), 120 + i * 230));
-      requestAnimationFrame(() => { el.querySelector(".boot-bar i").style.transform = "scaleX(1)"; });
-      setTimeout(finish, 1700);
-    });
-  }
 
   // ---------- interaction effects ----------
   // Cards light up under the cursor: CSS reads --mx/--my set here.
@@ -719,27 +617,23 @@
   window.Site = {
     getData, api, ApiError, mode: () => mode, esc, fmtDate, parseDate, isUpcoming, today,
     avatar, initials, uid, icon, socialLinks, observeReveal, observeCounters, hydrateIcons,
-    openModal, closeModal, toast, neuralCanvas, clone, chips, unique, reduceMotion, scramble, finePointer
+    openModal, closeModal, toast, neuralCanvas, clone, chips, unique, reduceMotion
   };
 
   document.addEventListener("DOMContentLoaded", async () => {
     hydrateIcons();
     // The admin app manages its own data and skips the public layout.
     if (!document.body.hasAttribute("data-no-layout")) {
-      const boot = bootSequence();
       await loadData();
       renderLayout();
       initSpotlight();
       initTilt();
       initMagnetic();
-      initCursor();
-      await boot;
     }
     document.body.classList.add("ready");
     document.dispatchEvent(new CustomEvent("site:ready"));
     hydrateIcons();
     observeReveal();
     observeCounters();
-    if (!document.body.hasAttribute("data-no-layout")) observeScramble();
   });
 })();

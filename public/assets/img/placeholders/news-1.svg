@@ -1,17 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a1030"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient>
-    <pattern id="p" width="24" height="24" patternUnits="userSpaceOnUse"><rect x="10" y="10" width="3" height="3" fill="#fff" opacity=".18"/></pattern>
-    <linearGradient id="f" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></linearGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#312e81"/><stop offset="1" stop-color="#be185d"/></linearGradient>
+    <pattern id="p" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1.5" fill="#fff" opacity=".25"/></pattern>
   </defs>
   <rect width="800" height="500" fill="url(#g)"/>
-  <rect x="400" width="400" height="500" fill="url(#p)"/>
-  <rect width="800" height="500" fill="url(#f)" opacity=".35"/>
-  <g fill="none" stroke="#fff" stroke-opacity=".32" stroke-width="2"><path d="M0 420 C 160 330, 260 440, 400 380"/><path d="M400 380 H 520 V 330 H 640 V 290 H 800" stroke-dasharray="6 8"/></g>
-  <g transform="translate(400 222)" fill="#fff" fill-opacity=".92">
+  <rect width="800" height="500" fill="url(#p)"/>
+  <g fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2">
+    <circle cx="640" cy="110" r="70"/><circle cx="640" cy="110" r="120"/><path d="M0 420 Q200 330 400 400 T800 360"/>
+  </g>
+  <g transform="translate(400 225)" fill="#fff" fill-opacity=".9">
     <rect x="-34" y="-28" width="68" height="52" rx="8" fill="none" stroke="#fff" stroke-width="4"/>
     <circle cx="-12" cy="-8" r="7"/><path d="M-30 20 L-8 0 L6 12 L16 4 L30 20 Z"/>
   </g>
   <text x="400" y="300" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#fff">News Image</text>
-  <text x="400" y="334" text-anchor="middle" font-family="Courier New, monospace" font-size="15" fill="#fff" fill-opacity=".8">// replace with real image</text>
+  <text x="400" y="334" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#fff" fill-opacity=".8">Replace with real image</text>
 </svg>
