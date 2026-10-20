@@ -10,7 +10,7 @@ document.addEventListener("site:ready", () => {
   // ---------- content schemas: drive the tables and edit forms ----------
   const SCHEMAS = {
     people: {
-      label: "People", singular: "person", emoji: "&#128101;", ordered: true,
+      label: "People", singular: "person", ic: "users", ordered: true,
       columns: [["photo", "avatar"], ["name", "text"], ["role", "text"], ["team", "tag"], ["year", "text"]],
       fields: [
         { k: "name", label: "Full name", required: true },
@@ -25,7 +25,7 @@ document.addEventListener("site:ready", () => {
       ]
     },
     projects: {
-      label: "Projects", singular: "project", emoji: "&#128640;", ordered: true,
+      label: "Projects", singular: "project", ic: "rocket", ordered: true,
       columns: [["image", "thumb"], ["title", "text"], ["domain", "tag"], ["status", "status"], ["year", "text"]],
       fields: [
         { k: "title", label: "Title", required: true, full: true },
@@ -41,7 +41,7 @@ document.addEventListener("site:ready", () => {
       ]
     },
     events: {
-      label: "Events", singular: "event", emoji: "&#128197;",
+      label: "Events", singular: "event", ic: "calendar",
       columns: [["image", "thumb"], ["title", "text"], ["date", "date"], ["type", "tag"], ["venue", "text"]],
       fields: [
         { k: "title", label: "Title", required: true, full: true },
@@ -55,7 +55,7 @@ document.addEventListener("site:ready", () => {
       ]
     },
     gallery: {
-      label: "Gallery", singular: "photo", emoji: "&#128248;", ordered: true,
+      label: "Gallery", singular: "photo", ic: "image", ordered: true,
       columns: [["src", "thumb"], ["caption", "text"], ["album", "tag"]],
       fields: [
         { k: "src", label: "Image", type: "image", required: true, full: true },
@@ -64,7 +64,7 @@ document.addEventListener("site:ready", () => {
       ]
     },
     news: {
-      label: "News", singular: "article", emoji: "&#128240;",
+      label: "News", singular: "article", ic: "news",
       columns: [["image", "thumb"], ["title", "text"], ["date", "date"], ["category", "tag"]],
       fields: [
         { k: "title", label: "Headline", required: true, full: true },
@@ -76,7 +76,7 @@ document.addEventListener("site:ready", () => {
       ]
     },
     sponsors: {
-      label: "Partners", singular: "partner", emoji: "&#129309;", ordered: true,
+      label: "Partners", singular: "partner", ic: "partners", ordered: true,
       columns: [["logo", "thumb"], ["name", "text"], ["url", "text"]],
       fields: [
         { k: "name", label: "Name", required: true },
@@ -88,17 +88,17 @@ document.addEventListener("site:ready", () => {
 
   const NAV = [
     { group: "Workspace" },
-    { k: "overview", e: "&#128202;", l: "Overview" },
-    { k: "messages", e: "&#128233;", l: "Inbox" },
+    { k: "overview", ic: "grid", l: "Overview" },
+    { k: "messages", ic: "inbox", l: "Inbox" },
     { group: "Content" },
-    ...Object.entries(SCHEMAS).map(([k, s]) => ({ k, e: s.emoji, l: s.label })),
-    { k: "media", e: "&#128444;&#65039;", l: "Media library" },
-    { k: "settings", e: "&#9881;&#65039;", l: "Site settings" },
+    ...Object.entries(SCHEMAS).map(([k, s]) => ({ k, ic: s.ic, l: s.label })),
+    { k: "media", ic: "upload", l: "Media library" },
+    { k: "settings", ic: "settings", l: "Site settings" },
     { group: "Administration" },
-    { k: "users", e: "&#128273;", l: "Users", admin: true },
-    { k: "activity", e: "&#128220;", l: "Activity log", admin: true },
-    { k: "backup", e: "&#128190;", l: "Backup & restore" },
-    { k: "account", e: "&#128100;", l: "My account" }
+    { k: "users", ic: "key", l: "Users", admin: true },
+    { k: "activity", ic: "activity", l: "Activity log", admin: true },
+    { k: "backup", ic: "database", l: "Backup & restore" },
+    { k: "account", ic: "user", l: "My account" }
   ];
 
   const state = { me: null, view: "overview", counts: {}, newMessages: 0 };
@@ -172,7 +172,7 @@ document.addEventListener("site:ready", () => {
       let badge = "";
       if (n.k in state.counts) badge = `<span class="count">${state.counts[n.k]}</span>`;
       if (n.k === "messages" && state.newMessages) badge = `<span class="count alert">${state.newMessages}</span>`;
-      return `<button type="button" class="side-link ${state.view === n.k ? "active" : ""}" data-view="${n.k}"><span aria-hidden="true">${n.e}</span>${n.l}${badge}</button>`;
+      return `<button type="button" class="side-link ${state.view === n.k ? "active" : ""}" data-view="${n.k}">${icon(n.ic)}${n.l}${badge}</button>`;
     }).join("");
     document.getElementById("side-user").innerHTML = `${avatar({ name: state.me.name }, "avatar-sm")}<div><b>${esc(state.me.name)}</b><small>${esc(state.me.role)}</small></div>`;
   }
@@ -227,7 +227,7 @@ document.addEventListener("site:ready", () => {
       <div class="dash-grid">
         ${Object.entries(SCHEMAS).map(([k, s]) => `
           <button type="button" class="panel span-4" data-goto="${k}" style="text-align:left;cursor:pointer;font:inherit;color:inherit">
-            <div class="kpi"><div class="kpi-icon">${s.emoji}</div><div><div class="kpi-val">${o.counts[k]}</div><div class="kpi-label">${s.label}</div></div></div>
+            <div class="kpi"><div class="kpi-icon">${icon(s.ic)}</div><div><div class="kpi-val">${o.counts[k]}</div><div class="kpi-label">${s.label}</div></div></div>
             <div class="kpi-sub">Manage ${s.label.toLowerCase()} &rarr;</div>
           </button>`).join("")}
       </div>
@@ -268,7 +268,7 @@ document.addEventListener("site:ready", () => {
     let query = "";
 
     main.innerHTML = `
-      ${header(`${s.emoji} ${s.label}`, `<span id="coll-count"></span>`, `
+      ${header(`${icon(s.ic)} ${s.label}`, `<span id="coll-count"></span>`, `
         <label class="search" style="min-width:220px"><span class="sr-only">Search</span>${icon("search")}<input type="search" id="q" placeholder="Search ${s.label.toLowerCase()}"></label>
         <button class="btn btn-primary btn-sm" id="add">+ Add ${s.singular}</button>`)}
       <div class="table-wrap"><table>
@@ -414,7 +414,7 @@ document.addEventListener("site:ready", () => {
   // ---------- inbox ----------
   async function viewMessages() {
     let filter = "new";
-    main.innerHTML = `${header("&#128233; Inbox", "Messages sent through the contact form.")}
+    main.innerHTML = `${header(`${icon("inbox")} Inbox`, "Messages sent through the contact form.")}
       <div id="msg-view"><div class="chips" id="msg-filter" style="margin-bottom:18px"></div>
       <div class="panel" style="padding:0" id="msg-list"></div></div>`;
     const filters = [["new", "Unread"], ["read", "Read"], ["archived", "Archived"], ["", "All"]];
@@ -433,7 +433,7 @@ document.addEventListener("site:ready", () => {
             <button class="btn btn-sm btn-danger" data-del="${esc(m.id)}">Delete</button>
           </div>
           <div class="msg-body">${esc(m.body)}</div>
-        </div>`).join("") || `<div class="empty" style="border:0">${filter === "new" ? "&#127881; Inbox zero - no unread messages." : "No messages here."}</div>`;
+        </div>`).join("") || `<div class="empty" style="border:0">${filter === "new" ? `<span class="empty-state">${icon("check")}Inbox zero - no unread messages.</span>` : "No messages here."}</div>`;
     }
     await paint();
     document.getElementById("msg-view").addEventListener("click", async (e) => {
@@ -450,9 +450,9 @@ document.addEventListener("site:ready", () => {
 
   // ---------- media library ----------
   async function viewMedia() {
-    main.innerHTML = `${header("&#128444;&#65039; Media library", "Images uploaded to the server. Copy a link to use it anywhere.")}
+    main.innerHTML = `${header(`${icon("upload")} Media library`, "Images uploaded to the server. Copy a link to use it anywhere.")}
       <label class="dropzone" id="drop"><input type="file" accept="image/*" multiple hidden id="media-input">
-        <b>Drop images here</b> or click to choose &middot; PNG, JPEG, WebP, GIF, AVIF, SVG</label>
+        ${icon("upload")}<b>Drop images here</b> or click to choose &middot; PNG, JPEG, WebP, GIF, AVIF, SVG</label>
       <div class="media-grid" id="media" style="margin-top:20px"></div>`;
     async function paint() {
       const { items } = await api("/uploads");
@@ -491,7 +491,7 @@ document.addEventListener("site:ready", () => {
     const cap = (k) => k[0].toUpperCase() + k.slice(1);
     const socials = st.socials || {}, stats = st.stats || {};
     main.innerHTML = `
-      ${header("&#9881;&#65039; Site settings", "Branding, contact details and headline numbers.")}
+      ${header(`${icon("settings")} Site settings`, "Branding, contact details and headline numbers.")}
       <form id="settings-form" novalidate>
         <div class="panel" style="margin-bottom:20px"><div class="panel-head"><h3>Branding</h3></div><div class="form-grid">
           ${f("clubName", "Club name", st.clubName)}${f("institute", "Institute", st.institute)}
@@ -527,7 +527,7 @@ document.addEventListener("site:ready", () => {
   async function viewUsers() {
     const { items } = await api("/users");
     main.innerHTML = `
-      ${header("&#128273; Users", "People who can sign in to this admin panel.", '<button class="btn btn-primary btn-sm" id="add-user">+ Add user</button>')}
+      ${header(`${icon("key")} Users`, "People who can sign in to this admin panel.", '<button class="btn btn-primary btn-sm" id="add-user">+ Add user</button>')}
       <div class="notice"><b>Roles:</b> <em>Editors</em> manage content, messages and media. <em>Admins</em> can also manage users, see the activity log and restore backups.</div>
       <div class="table-wrap"><table>
         <thead><tr><th></th><th>Name</th><th>Email</th><th>Role</th><th>Last sign-in</th><th style="text-align:right">Actions</th></tr></thead>
@@ -575,14 +575,14 @@ document.addEventListener("site:ready", () => {
   // ---------- activity (admin) ----------
   async function viewActivity() {
     const { items } = await api("/admin/audit?limit=200");
-    main.innerHTML = `${header("&#128220; Activity log", "Every change made through the admin panel, newest first.")}
+    main.innerHTML = `${header(`${icon("activity")} Activity log`, "Every change made through the admin panel, newest first.")}
       <div class="panel">${items.map(auditLine).join("") || '<p class="muted">Nothing yet.</p>'}</div>`;
   }
 
   // ---------- backup ----------
   function viewBackup() {
     main.innerHTML = `
-      ${header("&#128190; Backup &amp; restore", "Download a copy of all content, or restore one.")}
+      ${header(`${icon("database")} Backup &amp; restore`, "Download a copy of all content, or restore one.")}
       <div class="dash-grid">
         <div class="panel span-6"><div class="panel-head"><h3>Download backup</h3></div>
           <p class="muted small">A JSON file with all settings and content. Uploaded image files live in the server's data folder - back that up too.</p>
@@ -610,7 +610,7 @@ document.addEventListener("site:ready", () => {
   // ---------- account ----------
   function viewAccount() {
     main.innerHTML = `
-      ${header("&#128100; My account", esc(state.me.email))}
+      ${header(`${icon("user")} My account`, esc(state.me.email))}
       <div class="panel" style="max-width:560px"><div class="panel-head"><h3>Change password</h3></div>
         <form id="pw-form" novalidate>
           <div class="field" data-field="currentPassword"><label for="pw0">Current password</label><input id="pw0" name="currentPassword" type="password" autocomplete="current-password" required></div>

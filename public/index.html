@@ -3,44 +3,79 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Home | AI Club IIT Dharwad</title>
+  <title>AI Club | IIT Dharwad</title>
   <meta name="description" content="AI Club of IIT Dharwad - a student community for machine learning, deep learning, computer vision, NLP and robotics.">
-  <meta name="theme-color" content="#07070f">
+  <meta name="theme-color" content="#05050c">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <script src="assets/js/core.js"></script>
 </head>
 <body>
 <main>
-  <section class="hero">
+  <section class="hero" id="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="bg-grid" aria-hidden="true"></div>
     <canvas id="net" aria-hidden="true"></canvas>
     <div class="container hero-grid">
       <div>
-        <div class="pill reveal"><b>New</b> <span id="hero-pill">Recruitments are open</span></div>
-        <h1 class="reveal d1"><span id="hero-club">AI Club</span><br><span class="grad-text" id="hero-inst">IIT Dharwad</span></h1>
-        <p class="hero-lead reveal d2">We explore <span class="typed" id="typed">machine learning</span><br><span id="hero-tagline"></span></p>
-        <div class="hero-cta reveal d3">
-          <a class="btn btn-primary" href="projects.html">Explore projects &rarr;</a>
-          <a class="btn" href="events.html">Upcoming events</a>
+        <a class="announce" href="events.html" id="hero-announce"><b><span class="pulse-dot"></span>Next up</b><span id="hero-pill">Recruitments are open</span><i data-icon="arrow"></i></a>
+        <h1 class="hero-title"><span class="line"><span id="hero-club">AI Club</span></span><span class="line"><span class="grad-text" id="hero-inst">IIT Dharwad</span></span></h1>
+        <p class="hero-lead">We explore <span class="typed" id="typed">machine learning</span><br><span id="hero-tagline"></span></p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="projects.html" data-magnetic>Explore projects <i data-icon="arrow"></i></a>
+          <a class="btn" href="events.html" data-magnetic>Upcoming events</a>
+        </div>
+        <div class="hero-meta">
+          <div class="avatar-stack" id="hero-avatars"></div>
+          <span><b id="hero-members">240+</b> students building with us</span>
         </div>
       </div>
-      <div class="hero-visual reveal d2" aria-hidden="true">
-        <div class="orb"></div>
-        <div class="ring"></div>
-        <div class="ring r2"></div>
-        <div class="hero-logo-card"><img id="hero-logo" src="assets/img/logo-placeholder.svg" alt=""></div>
-        <span class="chip-float">&#129504; Deep Learning</span>
-        <span class="chip-float">&#128065; Computer Vision</span>
-        <span class="chip-float">&#128172; NLP &amp; LLMs</span>
+
+      <div class="orbit" data-tilt="10" aria-hidden="true">
+        <div class="orbit-glow"></div>
+        <div class="orbit-ring r1">
+          <span class="planet" style="--a:20deg;--r:50cqw"><span><i data-icon="brain"></i></span></span>
+          <span class="planet" style="--a:200deg;--r:50cqw"><span><i data-icon="bot"></i></span></span>
+        </div>
+        <div class="orbit-ring r2">
+          <span class="planet" style="--a:110deg;--r:36cqw"><span><i data-icon="eye"></i></span></span>
+          <span class="planet" style="--a:290deg;--r:36cqw"><span><i data-icon="message"></i></span></span>
+        </div>
+        <div class="orbit-ring r3">
+          <span class="planet" style="--a:60deg;--r:22cqw"><span><i data-icon="cpu"></i></span></span>
+        </div>
+        <div class="orbit-core"><img id="hero-logo" src="assets/img/logo-placeholder.svg" alt=""></div>
+        <div class="float-card fc1">
+          <span class="mono"><i data-icon="cpu"></i> Training model</span>
+          <b>Epoch 42</b>
+          <div class="bar"><i></i></div>
+        </div>
+        <div class="float-card fc2">
+          <span class="mono"><i data-icon="activity"></i> Validation</span>
+          <b>Loss falling</b>
+          <svg class="spark" viewBox="0 0 120 26" preserveAspectRatio="none"><path d="M2 4 C 20 6, 28 14, 44 13 S 70 20, 84 19 S 108 23, 118 22"/></svg>
+        </div>
       </div>
     </div>
+    <a class="scroll-cue" href="#about">Scroll</a>
   </section>
 
-  <section>
-    <div class="container">
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="ticker-1"></div>
+    <div class="ticker-track rev" id="ticker-2"></div>
+  </div>
+
+  <section id="about">
+    <div class="container about-grid">
+      <div class="reveal">
+        <div class="eyebrow">About the club</div>
+        <h2>A community of curious minds building <span class="grad-text">intelligent systems</span>.</h2>
+        <p class="lead" id="about-text"></p>
+        <a class="btn" href="people.html" style="margin-top:10px">Meet the team <i data-icon="arrow"></i></a>
+      </div>
       <div class="stats" id="stats"></div>
     </div>
   </section>
@@ -49,15 +84,59 @@
     <div class="container">
       <div class="section-head reveal">
         <div><div class="eyebrow">What we do</div><h2>Focus areas</h2></div>
-        <p id="about-text"></p>
+        <p>Six tracks, one community. Pick one, or wander between them - most of our best projects sit where two meet.</p>
       </div>
-      <div class="grid grid-3">
-        <div class="card feature hoverable reveal"><div class="feature-icon">&#129504;</div><h3>Machine &amp; Deep Learning</h3><p>From linear regression to transformers - learn the theory and ship real models.</p></div>
-        <div class="card feature hoverable reveal d1"><div class="feature-icon">&#128065;</div><h3>Computer Vision</h3><p>Detection, segmentation and generative models for images, video and satellite data.</p></div>
-        <div class="card feature hoverable reveal d2"><div class="feature-icon">&#128172;</div><h3>NLP &amp; LLMs</h3><p>Language models, retrieval-augmented generation and speech for Indian languages.</p></div>
-        <div class="card feature hoverable reveal"><div class="feature-icon">&#129302;</div><h3>Robotics &amp; RL</h3><p>Agents that learn by doing - simulation, control and real hardware.</p></div>
-        <div class="card feature hoverable reveal d1"><div class="feature-icon">&#128218;</div><h3>Research</h3><p>Weekly paper reading groups, mentorship and student publications.</p></div>
-        <div class="card feature hoverable reveal d2"><div class="feature-icon">&#9878;&#65039;</div><h3>Responsible AI</h3><p>Fairness, privacy and the societal impact of the systems we build.</p></div>
+      <div class="bento">
+        <a class="bento-tile wide reveal" href="projects.html">
+          <span class="tile-icon"><i data-icon="brain"></i></span>
+          <span class="tile-arrow"><i data-icon="arrowUpRight"></i></span>
+          <svg class="viz viz-net" viewBox="0 0 300 160" aria-hidden="true">
+            <g>
+              <line x1="40" y1="30" x2="150" y2="20"/><line x1="40" y1="30" x2="150" y2="65"/><line x1="40" y1="30" x2="150" y2="110"/>
+              <line x1="40" y1="80" x2="150" y2="20"/><line x1="40" y1="80" x2="150" y2="65"/><line x1="40" y1="80" x2="150" y2="110"/><line x1="40" y1="80" x2="150" y2="150"/>
+              <line x1="40" y1="130" x2="150" y2="65"/><line x1="40" y1="130" x2="150" y2="110"/><line x1="40" y1="130" x2="150" y2="150"/>
+              <line x1="150" y1="20" x2="260" y2="55"/><line x1="150" y1="65" x2="260" y2="55"/><line x1="150" y1="110" x2="260" y2="105"/>
+              <line x1="150" y1="150" x2="260" y2="105"/><line x1="150" y1="65" x2="260" y2="105"/><line x1="150" y1="110" x2="260" y2="55"/>
+            </g>
+            <circle cx="40" cy="30" r="7"/><circle class="hot" cx="40" cy="80" r="7"/><circle cx="40" cy="130" r="7"/>
+            <circle cx="150" cy="20" r="7"/><circle class="hot" cx="150" cy="65" r="7"/><circle cx="150" cy="110" r="7"/><circle class="hot" cx="150" cy="150" r="7"/>
+            <circle class="hot" cx="260" cy="55" r="9"/><circle cx="260" cy="105" r="9"/>
+          </svg>
+          <h3>Machine &amp; Deep Learning</h3>
+          <p>From linear regression to transformers. Learn the theory, then train and ship real models.</p>
+        </a>
+        <a class="bento-tile reveal d1" href="projects.html">
+          <span class="tile-icon"><i data-icon="eye"></i></span>
+          <div class="viz viz-detect" aria-hidden="true"><span class="shape"></span><span class="shape s2"></span><span class="box"><span>object 0.97</span></span></div>
+          <h3>Computer Vision</h3>
+          <p>Detection, segmentation and generative models for images, video and satellite data.</p>
+        </a>
+        <a class="bento-tile reveal" href="projects.html">
+          <span class="tile-icon"><i data-icon="message"></i></span>
+          <div class="viz viz-tokens" aria-hidden="true"><span>the</span><span>club</span><span>builds</span><span>language</span><span>models</span></div>
+          <h3>NLP &amp; LLMs</h3>
+          <p>Language models, retrieval and speech for Indian languages.</p>
+        </a>
+        <a class="bento-tile reveal d1" href="projects.html">
+          <span class="tile-icon"><i data-icon="bot"></i></span>
+          <span class="tile-arrow"><i data-icon="arrowUpRight"></i></span>
+          <h3>Robotics &amp; RL</h3>
+          <p>Agents that learn by doing - simulation, control and real hardware.</p>
+        </a>
+        <a class="bento-tile reveal d2" href="events.html">
+          <span class="tile-icon"><i data-icon="flask"></i></span>
+          <span class="tile-arrow"><i data-icon="arrowUpRight"></i></span>
+          <h3>Research</h3>
+          <p>Weekly paper reading groups, mentorship and student publications.</p>
+        </a>
+        <div class="bento-tile full reveal">
+          <span class="tile-icon"><i data-icon="scale"></i></span>
+          <div style="flex:1;min-width:240px">
+            <h3>Responsible AI</h3>
+            <p>Every project we build is reviewed for its impact on people - because capable systems should also be fair ones.</p>
+          </div>
+          <div class="pillars"><span class="tag">Fairness</span><span class="tag">Privacy</span><span class="tag">Transparency</span><span class="tag">Safety</span></div>
+        </div>
       </div>
     </div>
   </section>
@@ -66,7 +145,7 @@
     <div class="container">
       <div class="section-head reveal">
         <div><div class="eyebrow">Built by students</div><h2>Featured projects</h2></div>
-        <a class="btn btn-ghost" href="projects.html">All projects &rarr;</a>
+        <a class="btn btn-ghost" href="projects.html">All projects <i data-icon="arrow"></i></a>
       </div>
       <div class="grid grid-3" id="home-projects"></div>
     </div>
@@ -75,8 +154,23 @@
   <section>
     <div class="container">
       <div class="section-head reveal">
+        <div><div class="eyebrow">Get involved</div><h2>How to join</h2></div>
+        <p>No prior experience needed. Curiosity is the only prerequisite.</p>
+      </div>
+      <div class="steps reveal">
+        <div class="step"><div class="step-num"><i data-icon="form"></i></div><small>STEP 01</small><h3>Apply</h3><p>Fill the recruitment form when applications open each semester.</p></div>
+        <div class="step"><div class="step-num"><i data-icon="chat"></i></div><small>STEP 02</small><h3>Meet us</h3><p>A short, friendly conversation - tell us what excites you.</p></div>
+        <div class="step"><div class="step-num"><i data-icon="layers"></i></div><small>STEP 03</small><h3>Pick a team</h3><p>Tech, Research, Events or Design - or try a few.</p></div>
+        <div class="step"><div class="step-num"><i data-icon="rocket"></i></div><small>STEP 04</small><h3>Build</h3><p>Join a project, attend workshops and ship something real.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head reveal">
         <div><div class="eyebrow">Mark your calendar</div><h2>Upcoming events</h2></div>
-        <a class="btn btn-ghost" href="events.html">All events &rarr;</a>
+        <a class="btn btn-ghost" href="events.html">All events <i data-icon="arrow"></i></a>
       </div>
       <div class="grid grid-3" id="home-events"></div>
     </div>
@@ -86,29 +180,16 @@
     <div class="container">
       <div class="section-head reveal">
         <div><div class="eyebrow">Fresh off the press</div><h2>Latest news</h2></div>
-        <a class="btn btn-ghost" href="news.html">All news &rarr;</a>
+        <a class="btn btn-ghost" href="news.html">All news <i data-icon="arrow"></i></a>
       </div>
       <div class="grid grid-3" id="home-news"></div>
     </div>
   </section>
 
-  <section>
+  <section style="padding-top:40px">
     <div class="container">
-      <p class="center muted small reveal" style="letter-spacing:.14em;text-transform:uppercase">Our partners &amp; supporters</p>
+      <p class="center muted small reveal mono" style="letter-spacing:.16em;text-transform:uppercase;margin-bottom:24px">Our partners &amp; supporters</p>
       <div class="marquee reveal"><div class="marquee-track" id="sponsors"></div></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <div class="cta-band reveal">
-        <h2>Curious about AI? Come build with us.</h2>
-        <p>No prior experience needed. Join workshops, find a project team and learn alongside people who love this stuff as much as you do.</p>
-        <div class="hero-cta" style="justify-content:center">
-          <a class="btn" id="cta-join" href="#" target="_blank" rel="noopener">Join the club</a>
-          <a class="btn btn-ghost" href="contact.html">Get in touch</a>
-        </div>
-      </div>
     </div>
   </section>
 </main>

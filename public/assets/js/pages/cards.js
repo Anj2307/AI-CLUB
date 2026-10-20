@@ -7,7 +7,7 @@
 
   function projectCard(p, i) {
     return `
-      <article class="card hoverable reveal d${(i || 0) % 3}" data-project="${esc(p.id)}" tabindex="0" role="button" aria-label="Open ${esc(p.title)}">
+      <article class="card hoverable reveal d${(i || 0) % 3}" data-project="${esc(p.id)}" data-tilt="5" tabindex="0" role="button" aria-label="Open ${esc(p.title)}">
         <span class="tag ${STATUS_TAG[p.status] || ""} status-dot badge-float">${esc(p.status)}</span>
         <div class="card-media"><img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy"></div>
         <div class="card-body">
@@ -40,7 +40,7 @@
     const d = parseDate(e.date);
     const upcoming = isUpcoming(e);
     return `
-      <article class="card hoverable reveal d${(i || 0) % 3}" data-event="${esc(e.id)}" tabindex="0" role="button" aria-label="Open ${esc(e.title)}">
+      <article class="card hoverable reveal d${(i || 0) % 3}" data-event="${esc(e.id)}" data-tilt="5" tabindex="0" role="button" aria-label="Open ${esc(e.title)}">
         <div class="event-date"><b>${d.getDate()}</b><small>${d.toLocaleDateString("en-IN", { month: "short" })} ${d.getFullYear()}</small></div>
         <div class="card-media"><img src="${esc(e.image)}" alt="${esc(e.title)}" loading="lazy"></div>
         <div class="card-body">
@@ -60,18 +60,18 @@
       <h2 style="margin-top:14px">${esc(e.title)}</h2>
       <div class="meta"><span>${icon("calendar")} ${fmtDate(e.date, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</span><span>${icon("clock")} ${esc(e.time)}</span><span>${icon("pin")} ${esc(e.venue)}</span></div>
       <p class="article-body">${esc(e.description)}</p>
-      ${upcoming && e.registerLink ? `<a class="btn btn-primary" href="${esc(e.registerLink)}" target="_blank" rel="noopener">Register now &rarr;</a>` : ""}`);
+      ${upcoming && e.registerLink ? `<a class="btn btn-primary" href="${esc(e.registerLink)}" target="_blank" rel="noopener">Register now ${icon("arrow")}</a>` : ""}`);
   }
 
   function newsCard(n, i) {
     return `
-      <article class="card hoverable reveal d${(i || 0) % 3}" data-news="${esc(n.id)}" tabindex="0" role="button" aria-label="Read ${esc(n.title)}">
+      <article class="card hoverable reveal d${(i || 0) % 3}" data-news="${esc(n.id)}" data-tilt="5" tabindex="0" role="button" aria-label="Read ${esc(n.title)}">
         <div class="card-media"><img src="${esc(n.image)}" alt="${esc(n.title)}" loading="lazy"></div>
         <div class="card-body">
           <div class="tags"><span class="tag cyan">${esc(n.category)}</span><span class="tag">${fmtDate(n.date)}</span></div>
           <h3 style="margin-top:12px">${esc(n.title)}</h3>
           <p>${esc(n.summary)}</p>
-          <span class="person-role">Read more &rarr;</span>
+          <span class="read-more">Read story ${icon("arrow")}</span>
         </div>
       </article>`;
   }
@@ -99,6 +99,17 @@
     document.addEventListener("keydown", (ev) => {
       if ((ev.key === "Enter" || ev.key === " ") && ev.target.matches && ev.target.matches(sel)) { ev.preventDefault(); open(ev.target); }
     });
+
+    // Deep links (projects.html#<id>) open that item - used by search and shared links.
+    const openFromHash = () => {
+      const id = decodeURIComponent(location.hash.slice(1));
+      if (!id) return;
+      if (data.projects.some((x) => x.id === id)) projectModal(data.projects.find((x) => x.id === id));
+      else if (data.events.some((x) => x.id === id)) eventModal(data.events.find((x) => x.id === id));
+      else if (data.news.some((x) => x.id === id)) newsModal(data.news.find((x) => x.id === id));
+    };
+    window.addEventListener("hashchange", openFromHash);
+    openFromHash();
   }
 
   const byDateAsc = (a, b) => parseDate(a.date) - parseDate(b.date);

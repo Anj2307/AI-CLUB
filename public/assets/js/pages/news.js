@@ -13,7 +13,7 @@ document.addEventListener("site:ready", () => {
           <div class="tags"><span class="tag cyan">${esc(top.category)}</span><span class="tag">${fmtDate(top.date)}</span></div>
           <h2 style="margin-top:14px">${esc(top.title)}</h2>
           <p class="muted">${esc(top.summary)}</p>
-          <span class="person-role">Read the story &rarr;</span>
+          <span class="read-more">Read the story ${window.Site.icon("arrow")}</span>
         </div>
       </article>`;
   }

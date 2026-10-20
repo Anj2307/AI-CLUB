@@ -16,7 +16,7 @@ document.addEventListener("site:ready", () => {
           <div class="meta"><span>${icon("calendar")} ${fmtDate(next.date, { weekday: "short", day: "numeric", month: "long" })}</span><span>${icon("clock")} ${esc(next.time)}</span><span>${icon("pin")} ${esc(next.venue)}</span></div>
           <div class="countdown" id="countdown" aria-live="off"></div>
           <div class="hero-cta" style="margin-top:0">
-            ${next.registerLink ? `<a class="btn btn-primary" href="${esc(next.registerLink)}" target="_blank" rel="noopener">Register &rarr;</a>` : ""}
+            ${next.registerLink ? `<a class="btn btn-primary" href="${esc(next.registerLink)}" target="_blank" rel="noopener">Register ${icon("arrow")}</a>` : ""}
             <button class="btn" type="button" data-event="${esc(next.id)}">Details</button>
           </div>
         </div>
@@ -37,7 +37,7 @@ document.addEventListener("site:ready", () => {
   function card(e, i) {
     const d = parseDate(e.date);
     return `
-      <article class="card event-card hoverable reveal d${i % 3}" data-event="${esc(e.id)}" tabindex="0" role="button" aria-label="Open ${esc(e.title)}">
+      <article class="card event-card hoverable reveal d${i % 3}" data-event="${esc(e.id)}" data-tilt="3" tabindex="0" role="button" aria-label="Open ${esc(e.title)}">
         <div class="card-media" style="position:relative">
           <div class="event-date"><b>${d.getDate()}</b><small>${d.toLocaleDateString("en-IN", { month: "short" })}</small></div>
           <img src="${esc(e.image)}" alt="" loading="lazy">

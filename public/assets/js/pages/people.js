@@ -39,7 +39,7 @@ document.addEventListener("site:ready", () => {
     const list = members.filter((p) => (team === "All" || p.team === team) &&
       (!q || (p.name + " " + p.role + " " + p.year).toLowerCase().includes(q)));
     grid.innerHTML = list.map((p, i) => `
-      <div class="card person hoverable reveal d${i % 3}">
+      <div class="card person hoverable reveal d${i % 3}" id="${esc(p.id)}" data-tilt="4">
         ${avatar(p)}
         <h3>${esc(p.name)}</h3>
         <div class="person-role">${esc(p.role)}</div>
@@ -52,4 +52,16 @@ document.addEventListener("site:ready", () => {
   chips(document.getElementById("team-filter"), ["All", ...teams], (v) => { team = v; render(); });
   search.addEventListener("input", render);
   render();
+
+  // Deep link (people.html#<id>, used by search): scroll to and highlight that person.
+  const focusFromHash = () => {
+    const el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (!el || !el.classList.contains("person")) return;
+    el.classList.add("in");
+    el.scrollIntoView({ block: "center" });
+    el.classList.add("highlight");
+    setTimeout(() => el.classList.remove("highlight"), 2400);
+  };
+  window.addEventListener("hashchange", focusFromHash);
+  focusFromHash();
 });

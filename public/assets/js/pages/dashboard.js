@@ -1,21 +1,21 @@
 document.addEventListener("site:ready", () => {
-  const { getData, esc, fmtDate, parseDate, isUpcoming, avatar, chips, unique } = window.Site;
+  const { getData, esc, fmtDate, parseDate, isUpcoming, avatar, chips, unique, icon } = window.Site;
   const { bindCardClicks, byDateAsc, byDateDesc } = window.Cards;
   const data = getData();
   const s = data.settings;
 
   // ---------- KPI tiles ----------
   const upcoming = data.events.filter(isUpcoming).sort(byDateAsc);
-  const kpi = (id, emoji, val, label, sub) => {
+  const kpi = (id, ic, val, label, sub) => {
     document.getElementById(id).innerHTML = `
-      <div class="kpi"><div class="kpi-icon">${emoji}</div>
+      <div class="kpi"><div class="kpi-icon">${icon(ic)}</div>
         <div><div class="kpi-val" data-count="${val}">0</div><div class="kpi-label">${label}</div></div></div>
       <div class="kpi-sub">${sub}</div>`;
   };
-  kpi("kpi-members", "&#128101;", Number(s.stats.members) || 0, "Members", `${data.people.length} listed on the People page`);
-  kpi("kpi-projects", "&#128640;", data.projects.length, "Projects", `${data.projects.filter((p) => p.status === "Ongoing").length} in progress`);
-  kpi("kpi-events", "&#128197;", data.events.length, "Events", `${upcoming.length} upcoming`);
-  kpi("kpi-photos", "&#128248;", data.gallery.length, "Photos", `${unique(data.gallery.map((g) => g.album)).length} albums`);
+  kpi("kpi-members", "users", Number(s.stats.members) || 0, "Members", `${data.people.length} listed on the People page`);
+  kpi("kpi-projects", "rocket", data.projects.length, "Projects", `${data.projects.filter((p) => p.status === "Ongoing").length} in progress`);
+  kpi("kpi-events", "calendar", data.events.length, "Events", `${upcoming.length} upcoming`);
+  kpi("kpi-photos", "image", data.gallery.length, "Photos", `${unique(data.gallery.map((g) => g.album)).length} albums`);
 
   // ---------- events per month (single-series bar chart) ----------
   const chartEl = document.getElementById("events-chart");
